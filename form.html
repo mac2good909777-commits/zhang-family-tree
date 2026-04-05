@@ -21,7 +21,6 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(-
 
 .section{background:var(--card);border:1px solid #E8E0D0;border-radius:12px;padding:24px;margin-bottom:16px}
 .section h2{font-size:16px;color:var(--accent);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #F0EAD6}
-.section h2 .emoji{margin-right:6px}
 
 .field{margin-bottom:16px}
 .field label{display:block;font-size:14px;font-weight:600;margin-bottom:4px;color:#444}
@@ -33,25 +32,32 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(-
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(74,103,65,.1)}
 .field textarea{resize:vertical;min-height:80px}
 
-.radio-group{display:flex;gap:12px;flex-wrap:wrap}
-.radio-group label{display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;padding:6px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);transition:.15s}
+.radio-group{display:flex;gap:10px;flex-wrap:wrap}
+.radio-group label{display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;padding:6px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);transition:.15s;font-size:14px}
 .radio-group label:hover{border-color:var(--accent)}
 .radio-group input[type="radio"]{accent-color:var(--accent)}
 .radio-group input[type="radio"]:checked+span{color:var(--accent);font-weight:600}
 
-.divider{border:none;border-top:1px dashed #E0D8C8;margin:16px 0}
+/* ── Mode selector ── */
+.mode-selector{display:flex;gap:12px;margin-bottom:20px}
+.mode-card{flex:1;padding:16px;border:2px solid #E8E0D0;border-radius:12px;cursor:pointer;text-align:center;transition:.2s;background:var(--card)}
+.mode-card:hover{border-color:var(--accent);background:#F5F0E1}
+.mode-card.active{border-color:var(--accent);background:#E8F5E9}
+.mode-card .icon{font-size:28px;margin-bottom:6px}
+.mode-card .title{font-size:14px;font-weight:700;color:var(--accent)}
+.mode-card .desc{font-size:11px;color:var(--muted);margin-top:4px}
 
-/* ── Children rows ── */
-.child-row{display:grid;grid-template-columns:1fr 80px 80px;gap:8px;margin-bottom:8px;align-items:end}
-.child-row input,.child-row select{padding:8px 10px;font-size:14px}
-.child-row .label-sm{font-size:11px;color:var(--muted);margin-bottom:2px}
+/* ── Person rows ── */
+.person-row{display:grid;grid-template-columns:1fr 70px 70px;gap:8px;margin-bottom:8px;align-items:end}
+.person-row input,.person-row select{padding:8px 10px;font-size:14px}
+.person-row .label-sm{font-size:11px;color:var(--muted);margin-bottom:2px}
 
 .add-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 16px;border:1px dashed var(--border);border-radius:8px;background:none;cursor:pointer;font-size:13px;color:var(--accent);font-family:inherit;margin-top:4px}
 .add-btn:hover{background:#F5F0E1;border-color:var(--accent)}
 
-/* ── Sibling rows ── */
-.sibling-row{display:grid;grid-template-columns:1fr 80px 80px;gap:8px;margin-bottom:8px;align-items:end}
-.sibling-row input,.sibling-row select{padding:8px 10px;font-size:14px}
+/* ── Notice box ── */
+.notice{background:#E8F5E9;border:1px solid #A5D6A7;border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:#2E7D32;line-height:1.6}
+.notice b{font-size:14px}
 
 /* ── Submit ── */
 .submit-section{text-align:center;padding:20px 0}
@@ -67,16 +73,19 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(-
 .result p{color:var(--muted);font-size:14px}
 .result a{color:var(--accent);text-decoration:underline}
 
+.another-btn{display:inline-block;margin-top:16px;padding:10px 28px;background:var(--accent2);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-family:inherit;text-decoration:none}
+.another-btn:hover{background:#6B4A0A}
+
 /* ── Config banner ── */
-.config-banner{background:#FFF3CD;border:1px solid #FFE69C;border-radius:10px;padding:16px;margin-bottom:20px;font-size:13px;line-height:1.7}
+.config-banner{background:#FFF3CD;border:1px solid #FFE69C;border-radius:10px;padding:16px;margin-bottom:20px;font-size:13px;line-height:1.7;display:none}
 .config-banner h3{font-size:14px;margin-bottom:6px;color:#856404}
-.config-banner code{background:#F8E8A0;padding:2px 6px;border-radius:3px;font-size:12px}
-.config-banner .config-input{margin-top:8px}
-.config-banner input{width:100%;padding:8px;border:1px solid #FFE69C;border-radius:6px;font-size:13px}
+.config-banner input{width:100%;padding:8px;border:1px solid #FFE69C;border-radius:6px;font-size:13px;margin-top:6px}
 .config-banner button{margin-top:6px;padding:6px 16px;background:#856404;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px}
 
 footer{text-align:center;padding:20px;font-size:12px;color:#bbb}
 footer a{color:var(--accent)}
+
+.hidden{display:none!important}
 </style>
 </head>
 <body>
@@ -86,251 +95,341 @@ footer a{color:var(--accent)}
     <h1>張丙公族譜</h1>
     <div class="sub">丙派 ── 水裡港 ── 資料填寫表</div>
     <div class="desc">
-      歡迎張氏族人！請填寫您的個人及家庭資料，<br>
-      協助我們完善族譜紀錄。所有資料僅用於族譜建檔。
+      歡迎張氏族人！請幫忙填寫家族成員資料，<br>
+      您可以幫自己填，也可以代替長輩或其他家人填寫。
     </div>
   </div>
 
-  <!-- Config (admin only) -->
+  <!-- Config (admin only, hidden by default) -->
   <div class="config-banner" id="configBanner">
-    <h3>⚙ 管理員設定（首次需要）</h3>
-    <p>請輸入用來接收資料的 Google Apps Script 網址。<br>
-    設定一次後會記住，之後不再顯示。</p>
-    <div class="config-input">
-      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/xxxxx/exec">
-      <button onclick="saveScriptUrl()">儲存設定</button>
-      <button onclick="skipConfig()" style="background:#999;margin-left:4px">先跳過（資料暫存本機）</button>
-    </div>
+    <h3>管理員設定</h3>
+    <p>輸入 Google Apps Script 網址：</p>
+    <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/xxxxx/exec">
+    <button onclick="saveScriptUrl()">儲存</button>
+    <button onclick="skipConfig()" style="background:#999;margin-left:4px">跳過</button>
   </div>
 
   <form id="familyForm" onsubmit="return handleSubmit(event)">
 
-  <!-- ═══ Section 1: 個人資料 ═══ -->
+  <!-- ═══ Step 0: 填寫人身份 ═══ -->
   <div class="section">
-    <h2><span class="emoji">👤</span>您的個人資料</h2>
+    <h2>Step 1 ── 您是誰？</h2>
+    <div class="hint" style="margin-bottom:12px">先告訴我們您的身份，方便後續聯繫確認</div>
 
     <div class="field">
-      <label>姓名 *</label>
-      <input type="text" name="name" required placeholder="例：張志賢">
+      <label>您的姓名 *</label>
+      <input type="text" name="filler_name" required placeholder="填寫這份表單的人">
+    </div>
+
+    <div class="field">
+      <label>聯絡方式</label>
+      <div class="hint">LINE ID、手機、或 Email（方便管理員確認資料）</div>
+      <input type="text" name="filler_contact" placeholder="選填">
+    </div>
+  </div>
+
+  <!-- ═══ Step 1: 選擇模式 ═══ -->
+  <div class="section">
+    <h2>Step 2 ── 您要幫誰填寫？</h2>
+
+    <div class="mode-selector">
+      <div class="mode-card active" onclick="setMode('self')" id="modeSelf">
+        <div class="icon">🙋</div>
+        <div class="title">我自己</div>
+        <div class="desc">填寫我自己的資料</div>
+      </div>
+      <div class="mode-card" onclick="setMode('other')" id="modeOther">
+        <div class="icon">👨‍👩‍👦</div>
+        <div class="title">代替家人</div>
+        <div class="desc">幫父母、長輩、<br>兄弟姐妹填寫</div>
+      </div>
+    </div>
+
+    <input type="hidden" name="mode" id="modeInput" value="self">
+
+    <!-- Relationship (only for "other" mode) -->
+    <div id="relationshipField" class="field hidden">
+      <label>您與被記錄人的關係</label>
+      <div class="radio-group">
+        <label><input type="radio" name="relationship" value="父親"><span>我幫父親填</span></label>
+        <label><input type="radio" name="relationship" value="母親"><span>我幫母親填</span></label>
+        <label><input type="radio" name="relationship" value="祖父"><span>我幫祖父填</span></label>
+        <label><input type="radio" name="relationship" value="祖母"><span>我幫祖母填</span></label>
+        <label><input type="radio" name="relationship" value="兄弟姐妹"><span>兄弟姐妹</span></label>
+        <label><input type="radio" name="relationship" value="其他"><span>其他長輩/親戚</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Step 2: 被記錄人資料 ═══ -->
+  <div class="section">
+    <h2>Step 3 ── <span id="subjectTitle">個人</span>資料</h2>
+
+    <div class="notice" id="selfNotice">
+      <b>以下填寫您自己的資料</b>
+    </div>
+    <div class="notice hidden" id="otherNotice">
+      <b>以下填寫「被記錄人」的資料</b>（不是您自己的）
+    </div>
+
+    <div class="field">
+      <label><span id="nameLabel">您的</span>姓名 *</label>
+      <input type="text" name="subject_name" required placeholder="" id="nameInput">
     </div>
 
     <div class="field">
       <label>性別 *</label>
       <div class="radio-group">
-        <label><input type="radio" name="gender" value="男" required><span>♂ 男</span></label>
-        <label><input type="radio" name="gender" value="女"><span>♀ 女</span></label>
+        <label><input type="radio" name="subject_gender" value="男" required><span>♂ 男</span></label>
+        <label><input type="radio" name="subject_gender" value="女"><span>♀ 女</span></label>
       </div>
     </div>
 
     <div class="field">
-      <label>您在兄弟姐妹中的排行</label>
+      <label>兄弟姐妹中的排行</label>
       <div class="hint">不分男女的出生順序</div>
       <div class="radio-group">
-        <label><input type="radio" name="birth_order" value="長"><span>長（老大）</span></label>
-        <label><input type="radio" name="birth_order" value="次"><span>次（老二）</span></label>
-        <label><input type="radio" name="birth_order" value="三"><span>三</span></label>
-        <label><input type="radio" name="birth_order" value="四"><span>四</span></label>
-        <label><input type="radio" name="birth_order" value="五"><span>五</span></label>
-        <label><input type="radio" name="birth_order" value="其他"><span>其他</span></label>
+        <label><input type="radio" name="subject_order" value="長"><span>長（老大）</span></label>
+        <label><input type="radio" name="subject_order" value="次"><span>次（老二）</span></label>
+        <label><input type="radio" name="subject_order" value="三"><span>三</span></label>
+        <label><input type="radio" name="subject_order" value="四"><span>四</span></label>
+        <label><input type="radio" name="subject_order" value="五"><span>五</span></label>
+        <label><input type="radio" name="subject_order" value="其他"><span>其他</span></label>
       </div>
     </div>
 
     <div class="field">
       <label>存歿</label>
-      <div class="radio-group">
-        <label><input type="radio" name="alive_status" value="存"><span>🟢 在世</span></label>
-        <label><input type="radio" name="alive_status" value="歿"><span>🟣 已故</span></label>
+      <div class="radio-group" id="aliveGroup">
+        <label><input type="radio" name="subject_alive" value="存"><span>在世</span></label>
+        <label><input type="radio" name="subject_alive" value="歿"><span>已故</span></label>
       </div>
-      <div class="hint" style="margin-top:4px">若您是代替已故長輩填寫，請選「已故」</div>
     </div>
 
     <div class="field">
       <label>居住縣市</label>
-      <input type="text" name="city" placeholder="例：台北市、彰化縣">
+      <input type="text" name="subject_city" placeholder="例：台北市、彰化縣">
     </div>
 
     <div class="field">
       <label>職業 / 工作</label>
-      <input type="text" name="job" placeholder="例：教師、工程師、退休">
+      <input type="text" name="subject_job" placeholder="例：教師、工程師、退休、務農">
     </div>
   </div>
 
-  <!-- ═══ Section 2: 上一代 ═══ -->
+  <!-- ═══ Step 3: 父母 ═══ -->
   <div class="section">
-    <h2><span class="emoji">👨‍👩‍👦</span>您的父母資料</h2>
-    <div class="hint" style="margin-bottom:12px">幫助我們確認您在族譜中的位置</div>
+    <h2>Step 4 ── <span id="parentTitle">您的</span>父母</h2>
+    <div class="hint" style="margin-bottom:12px">幫助定位在族譜中的位置</div>
 
     <div class="field">
-      <label>父親姓名 *</label>
-      <input type="text" name="father_name" required placeholder="例：張基安">
+      <label><span class="parentRef">父親</span>姓名 *</label>
+      <input type="text" name="father_name" required placeholder="例：張基安" id="fatherInput">
     </div>
 
     <div class="field">
-      <label>母親姓名</label>
-      <input type="text" name="mother_name" placeholder="例：王美玲">
+      <label><span class="parentRef">母親</span>姓名</label>
+      <input type="text" name="mother_name" placeholder="選填">
     </div>
 
     <div class="field">
-      <label>祖父姓名</label>
-      <div class="hint">如果知道的話，有助於更精確定位</div>
-      <input type="text" name="grandfather_name" placeholder="例：張清秀">
+      <label><span class="parentRef">祖父</span>姓名</label>
+      <div class="hint">如果知道，有助於更精確定位</div>
+      <input type="text" name="grandfather_name" placeholder="選填">
     </div>
   </div>
 
-  <!-- ═══ Section 3: 配偶 ═══ -->
+  <!-- ═══ Step 4: 配偶 ═══ -->
   <div class="section">
-    <h2><span class="emoji">💑</span>配偶資料</h2>
-
+    <h2>Step 5 ── 配偶</h2>
     <div class="field">
-      <label>配偶姓名</label>
-      <input type="text" name="spouse_name" placeholder="留空表示未婚或不填">
+      <label><span id="spouseLabel">您的</span>配偶姓名</label>
+      <input type="text" name="spouse_name" placeholder="未婚或不填請留空">
     </div>
   </div>
 
-  <!-- ═══ Section 4: 兄弟姐妹 ═══ -->
+  <!-- ═══ Step 5: 兄弟姐妹 ═══ -->
   <div class="section">
-    <h2><span class="emoji">👫</span>您的兄弟姐妹</h2>
-    <div class="hint" style="margin-bottom:12px">請按出生順序填寫（不含您自己）</div>
+    <h2>Step 6 ── <span id="siblingTitle">您的</span>兄弟姐妹</h2>
+    <div class="hint" style="margin-bottom:12px">按出生順序填寫（不含<span class="subjectRef">您</span>自己）</div>
 
     <div id="siblingList">
-      <div class="sibling-row">
-        <div><div class="label-sm">姓名</div><input type="text" name="sibling_name_1" placeholder="兄弟姐妹姓名"></div>
-        <div><div class="label-sm">性別</div><select name="sibling_gender_1"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
-        <div><div class="label-sm">排行</div><select name="sibling_order_1"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
+      <div class="person-row">
+        <div><div class="label-sm">姓名</div><input type="text" name="sib_name_1" placeholder="姓名"></div>
+        <div><div class="label-sm">性別</div><select name="sib_gender_1"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
+        <div><div class="label-sm">排行</div><select name="sib_order_1"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
       </div>
     </div>
-    <button type="button" class="add-btn" onclick="addSibling()">＋ 新增兄弟姐妹</button>
+    <button type="button" class="add-btn" onclick="addRow('siblingList','sib')">+ 新增</button>
   </div>
 
-  <!-- ═══ Section 5: 子女 ═══ -->
+  <!-- ═══ Step 6: 子女 ═══ -->
   <div class="section">
-    <h2><span class="emoji">👶</span>您的子女</h2>
-    <div class="hint" style="margin-bottom:12px">請按出生順序填寫</div>
+    <h2>Step 7 ── <span id="childTitle">您的</span>子女</h2>
+    <div class="hint" style="margin-bottom:12px">按出生順序填寫</div>
 
     <div id="childList">
-      <div class="child-row">
-        <div><div class="label-sm">姓名</div><input type="text" name="child_name_1" placeholder="子女姓名"></div>
+      <div class="person-row">
+        <div><div class="label-sm">姓名</div><input type="text" name="child_name_1" placeholder="姓名"></div>
         <div><div class="label-sm">性別</div><select name="child_gender_1"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
         <div><div class="label-sm">排行</div><select name="child_order_1"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
       </div>
     </div>
-    <button type="button" class="add-btn" onclick="addChild()">＋ 新增子女</button>
+    <button type="button" class="add-btn" onclick="addRow('childList','child')">+ 新增</button>
   </div>
 
-  <!-- ═══ Section 6: 備註 ═══ -->
+  <!-- ═══ Step 7: 備註 ═══ -->
   <div class="section">
-    <h2><span class="emoji">📝</span>其他補充</h2>
+    <h2>Step 8 ── 其他補充</h2>
     <div class="field">
-      <label>備註</label>
-      <textarea name="notes" placeholder="任何您想補充的資訊，例如：&#10;• 某位長輩的詳細資料&#10;• 族譜中名字有誤需更正&#10;• 其他家族故事或紀錄"></textarea>
-    </div>
-    <div class="field">
-      <label>填寫人聯絡方式</label>
-      <div class="hint">方便管理員聯繫確認（選填）</div>
-      <input type="text" name="contact" placeholder="LINE ID、手機、或 Email">
+      <textarea name="notes" placeholder="任何想補充的資訊，例如：&#10;• 族譜上某個名字需要更正&#10;• 某位長輩的詳細故事&#10;• 其他家族紀錄"></textarea>
     </div>
   </div>
 
   <div class="submit-section">
     <button type="submit" class="submit-btn" id="submitBtn">送出資料</button>
+    <div class="hint" style="margin-top:8px">送出後可以再填一份，幫其他家人建檔</div>
   </div>
 
   </form>
 
-  <!-- Success screen -->
+  <!-- ═══ Success ═══ -->
   <div class="result" id="resultScreen">
     <div class="check">✅</div>
     <h2>感謝您的填寫！</h2>
     <p>資料已成功送出，管理員將會審核並更新族譜。</p>
+    <p style="margin-top:12px;font-size:13px;color:#666" id="resultSummary"></p>
+    <a href="#" class="another-btn" onclick="resetForm()">再幫一位家人填寫</a>
     <p style="margin-top:16px">
       <a href="index.html">← 回到族譜瀏覽</a>
-      &nbsp;｜&nbsp;
-      <a href="#" onclick="location.reload()">再填一份（代替其他人填寫）</a>
     </p>
   </div>
 
   <footer>
     張丙公派系表（丙派）── 水裡港<br>
-    <a href="index.html">瀏覽族譜</a>
+    <a href="index.html">瀏覽族譜</a> ｜
+    <span style="cursor:pointer;text-decoration:underline" onclick="document.getElementById('configBanner').style.display='block'">管理員設定</span>
   </footer>
 </div>
 
 <script>
-let siblingCount = 1;
+// ── State ──
+let mode = 'self';
+let sibCount = 1;
 let childCount = 1;
 
-function addSibling() {
-  siblingCount++;
-  const row = document.createElement('div');
-  row.className = 'sibling-row';
-  row.innerHTML = `
-    <div><div class="label-sm">姓名</div><input type="text" name="sibling_name_${siblingCount}" placeholder="兄弟姐妹姓名"></div>
-    <div><div class="label-sm">性別</div><select name="sibling_gender_${siblingCount}"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
-    <div><div class="label-sm">排行</div><select name="sibling_order_${siblingCount}"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>`;
-  document.getElementById('siblingList').appendChild(row);
+// ── Mode switching ──
+function setMode(m) {
+  mode = m;
+  document.getElementById('modeInput').value = m;
+  document.getElementById('modeSelf').classList.toggle('active', m === 'self');
+  document.getElementById('modeOther').classList.toggle('active', m === 'other');
+  document.getElementById('relationshipField').classList.toggle('hidden', m === 'self');
+
+  // Update all labels
+  if (m === 'self') {
+    document.getElementById('selfNotice').classList.remove('hidden');
+    document.getElementById('otherNotice').classList.add('hidden');
+    document.getElementById('subjectTitle').textContent = '個人';
+    document.getElementById('nameLabel').textContent = '您的';
+    document.getElementById('nameInput').placeholder = '您的全名';
+    document.getElementById('parentTitle').textContent = '您的';
+    document.getElementById('spouseLabel').textContent = '您的';
+    document.getElementById('siblingTitle').textContent = '您的';
+    document.getElementById('childTitle').textContent = '您的';
+    document.getElementById('fatherInput').placeholder = '例：張基安';
+    document.querySelectorAll('.subjectRef').forEach(el => el.textContent = '您');
+    document.querySelectorAll('.parentRef').forEach(el => {
+      if (el.textContent.includes('祖父')) el.textContent = '祖父';
+      else if (el.textContent.includes('母親') || el.textContent.includes('他/她的母親')) el.textContent = '母親';
+      else el.textContent = '父親';
+    });
+    // Auto-set alive = 存
+    const aliveRadio = document.querySelector('input[name="subject_alive"][value="存"]');
+    if (aliveRadio) aliveRadio.checked = true;
+  } else {
+    document.getElementById('selfNotice').classList.add('hidden');
+    document.getElementById('otherNotice').classList.remove('hidden');
+    document.getElementById('subjectTitle').textContent = '被記錄人的';
+    document.getElementById('nameLabel').textContent = '被記錄人的';
+    document.getElementById('nameInput').placeholder = '您要幫誰填寫？填他/她的全名';
+    document.getElementById('parentTitle').textContent = '被記錄人的';
+    document.getElementById('spouseLabel').textContent = '被記錄人的';
+    document.getElementById('siblingTitle').textContent = '被記錄人的';
+    document.getElementById('childTitle').textContent = '被記錄人的';
+    document.getElementById('fatherInput').placeholder = '被記錄人的父親姓名';
+    document.querySelectorAll('.subjectRef').forEach(el => el.textContent = '被記錄人');
+    document.querySelectorAll('.parentRef').forEach(el => {
+      if (el.textContent.includes('祖父')) el.textContent = '他/她的祖父';
+      else if (el.textContent.includes('母親') || el.textContent === '母親') el.textContent = '他/她的母親';
+      else el.textContent = '他/她的父親';
+    });
+    // Reset alive selection
+    document.querySelectorAll('input[name="subject_alive"]').forEach(r => r.checked = false);
+  }
 }
 
-function addChild() {
-  childCount++;
+// ── Add person rows ──
+function addRow(listId, prefix) {
+  const list = document.getElementById(listId);
+  const count = prefix === 'sib' ? ++sibCount : ++childCount;
   const row = document.createElement('div');
-  row.className = 'child-row';
+  row.className = 'person-row';
   row.innerHTML = `
-    <div><div class="label-sm">姓名</div><input type="text" name="child_name_${childCount}" placeholder="子女姓名"></div>
-    <div><div class="label-sm">性別</div><select name="child_gender_${childCount}"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
-    <div><div class="label-sm">排行</div><select name="child_order_${childCount}"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>`;
-  document.getElementById('childList').appendChild(row);
+    <div><div class="label-sm">姓名</div><input type="text" name="${prefix}_name_${count}" placeholder="姓名"></div>
+    <div><div class="label-sm">性別</div><select name="${prefix}_gender_${count}"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
+    <div><div class="label-sm">排行</div><select name="${prefix}_order_${count}"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>`;
+  list.appendChild(row);
 }
 
 // ── Config ──
 const SCRIPT_URL_KEY = 'zhang_form_script_url';
-
 function saveScriptUrl() {
   const url = document.getElementById('scriptUrl').value.trim();
-  if (!url) { alert('請輸入網址'); return; }
+  if (!url) return alert('請輸入網址');
   localStorage.setItem(SCRIPT_URL_KEY, url);
   document.getElementById('configBanner').style.display = 'none';
-  alert('✅ 已儲存！');
+  alert('已儲存');
+}
+function skipConfig() { document.getElementById('configBanner').style.display = 'none'; }
+if (!localStorage.getItem(SCRIPT_URL_KEY)) {
+  // Show config for first-time admin
 }
 
-function skipConfig() {
-  document.getElementById('configBanner').style.display = 'none';
-}
-
-// Hide config banner if already set
-if (localStorage.getItem(SCRIPT_URL_KEY)) {
-  document.getElementById('configBanner').style.display = 'none';
-}
-
-// ── Collect form data ──
+// ── Collect data ──
 function collectData() {
   const f = document.getElementById('familyForm');
   const fd = new FormData(f);
   const data = {};
 
-  // Basic fields
-  data.姓名 = fd.get('name') || '';
-  data.性別 = fd.get('gender') || '';
-  data.排行 = fd.get('birth_order') || '';
-  data.存歿 = fd.get('alive_status') || '';
-  data.居住縣市 = fd.get('city') || '';
-  data.職業 = fd.get('job') || '';
+  data.填寫模式 = fd.get('mode') || 'self';
+  data.填寫人姓名 = fd.get('filler_name') || '';
+  data.填寫人聯絡 = fd.get('filler_contact') || '';
+  data.與被記錄人關係 = fd.get('relationship') || (mode === 'self' ? '本人' : '');
+
+  data.姓名 = fd.get('subject_name') || '';
+  data.性別 = fd.get('subject_gender') || '';
+  data.排行 = fd.get('subject_order') || '';
+  data.存歿 = fd.get('subject_alive') || '';
+  data.居住縣市 = fd.get('subject_city') || '';
+  data.職業 = fd.get('subject_job') || '';
+
   data.父親姓名 = fd.get('father_name') || '';
   data.母親姓名 = fd.get('mother_name') || '';
   data.祖父姓名 = fd.get('grandfather_name') || '';
   data.配偶姓名 = fd.get('spouse_name') || '';
   data.備註 = fd.get('notes') || '';
-  data.聯絡方式 = fd.get('contact') || '';
   data.填寫時間 = new Date().toLocaleString('zh-TW');
 
   // Siblings
   const siblings = [];
-  for (let i = 1; i <= siblingCount; i++) {
-    const name = fd.get(`sibling_name_${i}`) || '';
+  for (let i = 1; i <= sibCount; i++) {
+    const name = fd.get(`sib_name_${i}`) || '';
     if (!name) continue;
     siblings.push({
       姓名: name,
-      性別: fd.get(`sibling_gender_${i}`) || '',
-      排行: fd.get(`sibling_order_${i}`) || ''
+      性別: fd.get(`sib_gender_${i}`) || '',
+      排行: fd.get(`sib_order_${i}`) || ''
     });
   }
   data.兄弟姐妹 = JSON.stringify(siblings);
@@ -362,21 +461,16 @@ async function handleSubmit(e) {
   const scriptUrl = localStorage.getItem(SCRIPT_URL_KEY);
 
   if (scriptUrl) {
-    // Send to Google Apps Script
     try {
       await fetch(scriptUrl, {
-        method: 'POST',
-        mode: 'no-cors',
+        method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-    } catch (err) {
-      console.error('Submit error:', err);
-      // Fall through to local backup
-    }
+    } catch (err) { console.error(err); }
   }
 
-  // Always save a local backup as well
+  // Local backup
   const existing = JSON.parse(localStorage.getItem('zhang_form_submissions') || '[]');
   existing.push(data);
   localStorage.setItem('zhang_form_submissions', JSON.stringify(existing));
@@ -384,10 +478,45 @@ async function handleSubmit(e) {
   // Show success
   document.getElementById('familyForm').style.display = 'none';
   document.getElementById('configBanner').style.display = 'none';
-  document.getElementById('resultScreen').classList.add('show');
 
+  const who = mode === 'self' ? '您自己' : data.姓名;
+  const fillerInfo = mode === 'other' ? `（由 ${data.填寫人姓名} 代填）` : '';
+  document.getElementById('resultSummary').textContent =
+    `已記錄：${who} ${fillerInfo}`;
+
+  document.getElementById('resultScreen').classList.add('show');
   return false;
 }
+
+// ── Reset for another entry ──
+function resetForm() {
+  document.getElementById('familyForm').reset();
+  document.getElementById('familyForm').style.display = '';
+  document.getElementById('resultScreen').classList.remove('show');
+
+  // Reset dynamic rows
+  document.getElementById('siblingList').innerHTML = `
+    <div class="person-row">
+      <div><div class="label-sm">姓名</div><input type="text" name="sib_name_1" placeholder="姓名"></div>
+      <div><div class="label-sm">性別</div><select name="sib_gender_1"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
+      <div><div class="label-sm">排行</div><select name="sib_order_1"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
+    </div>`;
+  document.getElementById('childList').innerHTML = `
+    <div class="person-row">
+      <div><div class="label-sm">姓名</div><input type="text" name="child_name_1" placeholder="姓名"></div>
+      <div><div class="label-sm">性別</div><select name="child_gender_1"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
+      <div><div class="label-sm">排行</div><select name="child_order_1"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
+    </div>`;
+  sibCount = 1;
+  childCount = 1;
+
+  // Keep mode as "other" since they're likely filling for multiple people
+  setMode('other');
+  window.scrollTo(0, 0);
+}
+
+// Init
+setMode('self');
 </script>
 </body>
 </html>
