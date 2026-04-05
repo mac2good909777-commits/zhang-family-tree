@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>張勇公派系表（丙派）── 水裡港</title>
+<style>
+:root {
+  --bg:#FDFBF5; --card:#fff; --border:#D4C5A9; --text:#2C2C2C; --muted:#888;
+  --accent:#4A6741; --accent2:#8B6914; --highlight:#FFF3CD;
+  --gen13:#6B2D2D; --gen14:#8B3A3A; --gen15:#A0522D; --gen16:#2E6B4F;
+  --gen17:#3A6B8C; --gen18:#5B4FA0; --gen19:#A0306B; --gen20:#C06B20;
+  --gen21:#1B7A7A; --gen22:#4A6B30;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Serif TC","Source Han Serif TC","PMingLiU",serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+/* ── Header ── */
+.header{text-align:center;padding:32px 20px 20px;border-bottom:2px solid var(--border);background:linear-gradient(180deg,#F5F0E1 0%,var(--bg) 100%)}
+.header h1{font-size:30px;letter-spacing:6px;color:var(--accent);margin-bottom:6px}
+.header .sub{font-size:15px;color:var(--muted);letter-spacing:2px}
+.header .origin{font-size:13px;color:#999;margin-top:4px}
+
+/* ── Status bar ── */
+.status-bar{text-align:center;padding:8px;font-size:12px;color:var(--muted);background:#F9F5EB;border-bottom:1px solid #EDE5D0}
+.status-bar .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.dot.ok{background:#27AE60} .dot.err{background:#E74C3C} .dot.loading{background:#F39C12;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── Toolbar ── */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;padding:12px 16px;border-bottom:1px solid #EDE5D0}
+.toolbar input{padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;width:220px;font-family:inherit;outline:none}
+.toolbar input:focus{border-color:var(--accent)}
+.btn{padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:var(--card);cursor:pointer;font-size:13px;font-family:inherit;transition:.15s}
+.btn:hover{background:#EDE5D0}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{background:#3A5731}
+
+/* ── Legend ── */
+.legend{display:none;flex-wrap:wrap;gap:6px;justify-content:center;padding:8px 16px}
+.legend.show{display:flex}
+.legend span{font-size:11px;padding:2px 10px;border-radius:10px;color:#fff}
+
+/* ── Stats ── */
+.stats-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:10px;font-size:13px;color:var(--muted)}
+.stats-row b{color:var(--text)}
+
+/* ── Tree ── */
+.tree-wrap{padding:16px 20px 60px;max-width:1200px;margin:0 auto}
+.tree ul{list-style:none;padding-left:28px;border-left:2px solid #E8E0D0}
+.tree>ul{border-left:none;padding-left:0}
+.tree li{position:relative;padding:3px 0}
+.tree li::before{content:"";position:absolute;left:-28px;top:16px;width:24px;border-top:2px solid #E8E0D0}
+.tree>ul>li::before{display:none}
+
+/* ── Node card ── */
+.node{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:8px;background:var(--card);border:1px solid #E8E0D0;cursor:pointer;transition:.15s;max-width:100%;flex-wrap:wrap}
+.node:hover{box-shadow:0 2px 10px rgba(0,0,0,.08);border-color:var(--accent)}
+.node.highlighted{background:var(--highlight);border-color:#D4A017}
+.node .gen{font-size:10px;padding:1px 7px;border-radius:10px;color:#fff;font-weight:600;white-space:nowrap}
+.node .name{font-size:17px;font-weight:700;letter-spacing:2px}
+.node .spouse-tag{color:#8E44AD;font-size:12px}
+.node .note-tag{font-size:10px;background:#F0EAD6;padding:1px 6px;border-radius:4px;color:#8B7355}
+.node .status-tag{font-size:10px;padding:1px 6px;border-radius:4px;font-weight:600}
+.status-tag.alive{background:#E8F5E9;color:#2E7D32}
+.status-tag.deceased{background:#F3E5F5;color:#6A1B9A}
+.node .info-tag{font-size:11px;color:#666}
+.node .uncertain{color:#C0392B;font-size:11px;cursor:help}
+.toggle-btn{display:inline-block;width:18px;height:18px;line-height:16px;text-align:center;font-size:12px;font-weight:bold;border:1px solid #ccc;border-radius:3px;background:#F9F5EB;cursor:pointer;user-select:none;flex-shrink:0}
+.toggle-btn:hover{background:#E8DCC8}
+.collapsed>ul{display:none}
+
+/* ── Detail panel ── */
+.panel-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100}
+.panel-overlay.show{display:block}
+.panel{position:fixed;right:0;top:0;bottom:0;width:380px;max-width:90vw;background:var(--card);box-shadow:-4px 0 20px rgba(0,0,0,.15);z-index:101;overflow-y:auto;padding:24px;transform:translateX(100%);transition:transform .25s}
+.panel.show{transform:translateX(0)}
+.panel h2{font-size:22px;letter-spacing:3px;margin-bottom:4px}
+.panel .gen-line{font-size:13px;color:var(--muted);margin-bottom:16px}
+.panel .field{margin-bottom:14px}
+.panel .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}
+.panel .field .val{font-size:15px;min-height:22px}
+.panel .field .val.empty{color:#ccc;font-style:italic;font-size:13px}
+.panel .close-btn{position:absolute;top:12px;right:16px;font-size:22px;cursor:pointer;color:#999;background:none;border:none}
+.panel .id-line{font-size:11px;color:#bbb;margin-top:16px;word-break:break-all}
+.panel .children-list{margin-top:12px}
+.panel .children-list h4{font-size:13px;color:var(--muted);margin-bottom:6px}
+.panel .child-chip{display:inline-block;padding:2px 10px;margin:2px;border-radius:12px;font-size:12px;background:#F0EAD6;cursor:pointer}
+.panel .child-chip:hover{background:#E0D4B8}
+
+/* ── Config modal ── */
+.config-modal{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.4);align-items:center;justify-content:center}
+.config-modal.show{display:flex}
+.config-box{background:var(--card);border-radius:12px;padding:28px;max-width:520px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.config-box h3{margin-bottom:12px;font-size:18px}
+.config-box p{font-size:13px;color:#666;margin-bottom:10px;line-height:1.6}
+.config-box input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;margin-bottom:12px;font-family:inherit}
+.config-box code{background:#F0EAD6;padding:2px 6px;border-radius:3px;font-size:12px}
+.config-box ol{padding-left:20px;font-size:13px;color:#666;margin:10px 0}
+.config-box ol li{margin-bottom:6px}
+
+/* ── Footer ── */
+footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px solid #EDE5D0}
+
+/* ── Responsive ── */
+@media(max-width:600px){
+  .header h1{font-size:22px;letter-spacing:3px}
+  .toolbar{gap:6px}
+  .toolbar input{width:160px}
+  .tree-wrap{padding:10px}
+  .tree ul{padding-left:18px}
+  .tree li::before{left:-18px;width:14px}
+  .node .name{font-size:15px}
+  .panel{width:100%;max-width:100%}
+}
+@media print{
+  .toolbar,.status-bar,.edit-hint,.config-modal,.panel-overlay,.panel{display:none!important}
+  .collapsed>ul{display:block!important}
+  .tree-wrap{padding:0}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>張勇公派系表</h1>
+  <div class="sub">丙派 ── 水裡港</div>
+  <div class="origin">祖籍：福建省漳州府漳浦縣眉田巷人家社杏仔腳</div>
+</div>
+
+<div class="status-bar" id="statusBar">
+  <span class="dot loading"></span> 載入中…
+</div>
+
+<div class="toolbar">
+  <input type="text" id="searchInput" placeholder="搜尋姓名…" oninput="searchTree(this.value)">
+  <button class="btn" onclick="expandAll()">全部展開</button>
+  <button class="btn" onclick="collapseAll()">全部收合</button>
+  <button class="btn" onclick="toggleLegend()">世代圖例</button>
+  <button class="btn primary" onclick="openConfig()">⚙ 設定 Google Sheet</button>
+</div>
+
+<div class="legend" id="legend">
+  <span style="background:var(--gen13)">十三世</span>
+  <span style="background:var(--gen14)">十四世</span>
+  <span style="background:var(--gen15)">十五世</span>
+  <span style="background:var(--gen16)">十六世</span>
+  <span style="background:var(--gen17)">十七世</span>
+  <span style="background:var(--gen18)">十八世</span>
+  <span style="background:var(--gen19)">十九世</span>
+  <span style="background:var(--gen20)">二十世</span>
+  <span style="background:var(--gen21)">二十一世</span>
+  <span style="background:var(--gen22)">二十二世</span>
+</div>
+
+<div class="stats-row" id="statsRow"></div>
+
+<div class="tree-wrap">
+  <div class="tree" id="treeRoot"></div>
+</div>
+
+<!-- Detail panel -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <button class="close-btn" onclick="closePanel()">&times;</button>
+  <div id="panelContent"></div>
+</div>
+
+<!-- Config modal -->
+<div class="config-modal" id="configModal">
+  <div class="config-box">
+    <h3>⚙ 連接 Google Sheets</h3>
+    <p>將族譜資料放在 Google 試算表，網頁會自動抓取最新資料。家人在試算表修改後，重新整理網頁就會更新。</p>
+    <ol>
+      <li>打開 Google Sheets，匯入下載的 <code>張勇公族譜_資料庫.xlsx</code></li>
+      <li>點選 <b>檔案 → 共用 → 發佈到網路</b></li>
+      <li>選擇「族譜資料」工作表，格式選 <b>CSV</b>，點「發佈」</li>
+      <li>複製網址中的 Sheet ID（<code>/d/</code> 和 <code>/</code> 之間的那串字）</li>
+      <li>貼到下方欄位</li>
+    </ol>
+    <label style="font-size:13px;color:#666;">Google Sheet ID：</label>
+    <input type="text" id="sheetIdInput" placeholder="例：1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
+    <label style="font-size:13px;color:#666;margin-top:4px;display:block">工作表名稱（gid，通常為 0）：</label>
+    <input type="text" id="sheetGidInput" placeholder="0" value="0">
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn primary" onclick="saveConfig()">儲存並載入</button>
+      <button class="btn" onclick="closeConfig()">取消</button>
+      <button class="btn" onclick="clearConfig()" style="margin-left:auto;color:#C0392B">清除設定（用內建資料）</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  張勇公派系表（丙派）── 水裡港 ── 資料來源：族譜照片辨識 + Google Sheets<br>
+  標有 ⚠ 者為辨識不確定，請在 Google Sheets 中校對後刪除「辨識不確定」欄的 TRUE
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════
+const STORAGE_KEY = 'zhang_family_sheet_id';
+const STORAGE_GID = 'zhang_family_sheet_gid';
+
+function getSheetUrl() {
+  const id = localStorage.getItem(STORAGE_KEY);
+  const gid = localStorage.getItem(STORAGE_GID) || '0';
+  if (!id) return null;
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
+}
+
+// ══════════════════════════════════════════════════════
+//  GEN HELPERS
+// ══════════════════════════════════════════════════════
+const GEN_COLORS = {13:'var(--gen13)',14:'var(--gen14)',15:'var(--gen15)',16:'var(--gen16)',17:'var(--gen17)',18:'var(--gen18)',19:'var(--gen19)',20:'var(--gen20)',21:'var(--gen21)',22:'var(--gen22)'};
+const GEN_NAMES = {13:'十三世',14:'十四世',15:'十五世',16:'十六世',17:'十七世',18:'十八世',19:'十九世',20:'二十世',21:'二十一世',22:'二十二世'};
+
+// ══════════════════════════════════════════════════════
+//  FALLBACK DATA (used when no Google Sheet is connected)
+// ══════════════════════════════════════════════════════
+const FALLBACK_CSV = `id,姓名,世代,父親id,配偶,備註,存歿,居住縣市,職業,辨識不確定
+1,張公勇,13,,,,,,開基祖,
+1.1,回常,14,1,,,,,,
+1.1.1,連,15,1.1,,又名張萬是國,,,,
+1.1.1.1,片九,16,1.1.1,,,,,,
+1.1.1.1.1,阿楠,17,1.1.1.1,林氏,,,,,
+1.1.1.1.1.1,智見,18,1.1.1.1.1,,承嗣,,,,TRUE
+1.1.1.1.1.2,朝智,18,1.1.1.1.1,,,,,,TRUE
+1.1.1.1.1.3,英宗,18,1.1.1.1.1,,,,,,TRUE
+1.1.1.1.1.4,見成,18,1.1.1.1.1,,,,,,TRUE
+1.1.1.1.2,秋桂,17,1.1.1.1,,,,,,
+1.1.1.1.3,其江,17,1.1.1.1,,,,,,TRUE
+1.1.1.1.3.1,胡兒,18,1.1.1.1.3,,,,,,TRUE
+1.1.1.1.4,其明,17,1.1.1.1,,,,,,
+1.1.1.1.4.1,丁吉,18,1.1.1.1.4,,,,,,TRUE
+1.1.1.1.4.2,科,18,1.1.1.1.4,,,,,,TRUE
+1.1.1.2,九合,16,1.1.1,張媽王謹,長,,,,
+1.1.1.2.1,屋,17,1.1.1.2,,,,,,
+1.1.1.2.1.1,吉,18,1.1.1.2.1,,,,,,
+1.1.1.2.1.1.1,榮宗,19,1.1.1.2.1.1,,,,,,
+1.1.1.2.1.1.1.1,文輝,20,1.1.1.2.1.1.1,,,,,,
+1.1.1.2.1.1.1.2,文賢,20,1.1.1.2.1.1.1,,,,,,
+1.1.1.2.1.1.2,榮裕,19,1.1.1.2.1.1,,,,,,
+1.1.1.2.1.1.3,榮華,19,1.1.1.2.1.1,,,,,,
+1.1.1.2.1.1.3.1,培森,20,1.1.1.2.1.1.3,,,,,,
+1.1.1.2.1.1.4,坤戊,19,1.1.1.2.1.1,,,,,,
+1.1.1.2.1.1.4.1,文哲,20,1.1.1.2.1.1.4,,,,,,
+1.1.1.2.1.1.4.2,宏政,20,1.1.1.2.1.1.4,,,,,,
+1.1.1.2.1.1.4.3,宏永,20,1.1.1.2.1.1.4,,,,,,
+1.1.1.2.1.1.4.4,宏章,20,1.1.1.2.1.1.4,,,,,,
+1.1.1.2.1.1.4.5,宏斌,20,1.1.1.2.1.1.4,,,,,,
+1.1.1.2.1.2,萬范,18,1.1.1.2.1,,,,,,
+1.1.1.2.1.2.1,瑞源,19,1.1.1.2.1.2,,,,,,
+1.1.1.2.1.3,黑烟,18,1.1.1.2.1,,,,,,
+1.1.1.2.1.3.1,阿杉,19,1.1.1.2.1.3,,,,,,
+1.1.1.2.1.3.2,振興,19,1.1.1.2.1.3,,,,,,
+1.1.1.2.1.3.3,振豐,19,1.1.1.2.1.3,,,,,,
+1.1.1.2.1.4,添,18,1.1.1.2.1,,老土,,,,
+1.1.1.2.1.4.1,安榮,19,1.1.1.2.1.4,,,,,,
+1.1.1.2.1.5,柳,18,1.1.1.2.1,,,,,,
+1.1.1.2.1.5.1,德南,19,1.1.1.2.1.5,,,,,,TRUE
+1.1.1.2.1.5.2,德川,19,1.1.1.2.1.5,,,,,,TRUE
+1.1.1.2.1.6,阿萬,18,1.1.1.2.1,,,,,,
+1.1.1.2.1.6.1,順發,19,1.1.1.2.1.6,,,,,,
+1.1.1.2.1.6.2,義昌,19,1.1.1.2.1.6,,,,,,
+1.1.1.2.1.6.3,義宗,19,1.1.1.2.1.6,,,,,,
+1.1.1.2.1.7,清秀,18,1.1.1.2.1,,,,,,
+1.1.1.2.1.7.1,基安,19,1.1.1.2.1.7,,,,,,
+1.1.1.2.1.7.2,志,19,1.1.1.2.1.7,,,,,,TRUE
+1.1.1.2.1.7.3,欽銘,19,1.1.1.2.1.7,,,,,,
+1.1.1.2.1.7.4,敏雄,19,1.1.1.2.1.7,,,,,,
+1.1.1.2.1.8,豪,18,1.1.1.2.1,,手寫版作「壽」,,,,
+1.1.1.2.1.8.1,聖賢,19,1.1.1.2.1.8,,,,,,
+1.1.1.2.1.8.1.1,銘詠,20,1.1.1.2.1.8.1,,,,,,
+1.1.1.2.1.8.2,義泉,19,1.1.1.2.1.8,,,,,,
+1.1.1.2.1.8.3,義高哲,19,1.1.1.2.1.8,,,,,,TRUE
+1.1.1.2.1.8.3.1,銘原,20,1.1.1.2.1.8.3,,,,,,TRUE
+1.1.1.2.1.8.3.2,銘裕,20,1.1.1.2.1.8.3,,,,,,TRUE
+1.1.1.2.1.8.4,曉仁,19,1.1.1.2.1.8,,,,,,
+1.1.1.2.1.8.4.1,明暉,20,1.1.1.2.1.8.4,,,,,,
+1.1.1.2.1.8.4.2,明聰,20,1.1.1.2.1.8.4,,,,,,
+1.1.1.2.2,金龍,17,1.1.1.2,,次,,,,
+1.1.1.2.2.1,令,18,1.1.1.2.2,,,,,,
+1.1.1.2.2.1.1,壽,19,1.1.1.2.2.1,,待確認,,,,TRUE
+1.1.1.2.2.2,份,18,1.1.1.2.2,,三,,,,
+1.1.1.2.2.2.1,添福,19,1.1.1.2.2.2,,長,,,,
+1.1.1.2.2.2.2,添財,19,1.1.1.2.2.2,,次,,,,
+1.1.1.2.2.2.3,火成,19,1.1.1.2.2.2,,,,,,
+1.1.1.2.2.2.3.1,文吉,20,1.1.1.2.2.2.3,,,,,,
+1.1.1.2.2.2.4,火炎,19,1.1.1.2.2.2,,,,,,
+1.1.1.2.2.2.4.1,文益龍,20,1.1.1.2.2.2.4,,,,,,TRUE
+1.1.1.2.2.2.4.1.1,權,21,1.1.1.2.2.2.4.1,,長,,,,
+1.1.1.2.3,寶,17,1.1.1.2,厝張媽王寶,,,,,
+1.1.1.2.3.1,甘棠,18,1.1.1.2.3,,大,,,,
+1.1.1.2.3.1.1,瑞金,19,1.1.1.2.3.1,,,,,,
+1.1.1.2.3.1.1.1,丁勝元,20,1.1.1.2.3.1.1,,,,,,TRUE
+1.1.1.2.3.1.2,西川,19,1.1.1.2.3.1,,,,,,
+1.1.1.2.3.1.2.1,基義州,20,1.1.1.2.3.1.2,,,,,,TRUE
+1.1.1.2.3.1.2.2,基全,20,1.1.1.2.3.1.2,,,,,,
+1.1.1.2.3.1.3,條水,19,1.1.1.2.3.1,,,,,,
+1.1.1.2.3.1.3.1,鴻文,20,1.1.1.2.3.1.3,,,,,,
+1.1.1.2.3.1.3.2,鴻棋,20,1.1.1.2.3.1.3,,,,,,
+1.1.1.2.3.1.3.3,鴻銘,20,1.1.1.2.3.1.3,,,,,,
+1.1.1.2.3.2,九順,18,1.1.1.2.3,,,,,,
+1.1.1.2.3.2.1,清輝,19,1.1.1.2.3.2,,,,,,
+1.1.1.2.3.2.1.1,興正,20,1.1.1.2.3.2.1,,,,,,TRUE
+1.1.1.2.3.2.1.2,興吉,20,1.1.1.2.3.2.1,,,,,,TRUE`;
+
+// ══════════════════════════════════════════════════════
+//  CSV PARSER
+// ══════════════════════════════════════════════════════
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = parseCSVLine(lines[0]);
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const vals = parseCSVLine(lines[i]);
+    if (vals.length < 2 || !vals[0].trim()) continue;
+    const obj = {};
+    headers.forEach((h, idx) => obj[h.trim().replace(/^"|"$/g,'')] = (vals[idx]||'').trim().replace(/^"|"$/g,''));
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i+1] === '"') { current += '"'; i++; }
+      else if (ch === '"') { inQuotes = false; }
+      else { current += ch; }
+    } else {
+      if (ch === '"') { inQuotes = true; }
+      else if (ch === ',') { result.push(current); current = ''; }
+      else { current += ch; }
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+// ══════════════════════════════════════════════════════
+//  BUILD TREE FROM FLAT DATA
+// ══════════════════════════════════════════════════════
+let allPeople = {};
+
+function buildTree(rows) {
+  const map = {};
+  rows.forEach(r => {
+    r._children = [];
+    map[r.id] = r;
+  });
+  allPeople = map;
+
+  let roots = [];
+  rows.forEach(r => {
+    const pid = r['父親id'] || r['parent_id'] || '';
+    if (pid && map[pid]) {
+      map[pid]._children.push(r);
+    } else if (!pid) {
+      roots.push(r);
+    }
+  });
+  return roots;
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════════
+function renderNode(person) {
+  const has = person._children && person._children.length > 0;
+  const li = document.createElement('li');
+  li.className = has ? 'expanded' : '';
+  li.dataset.id = person.id;
+
+  const gen = parseInt(person['世代'] || person.gen) || 0;
+  const name = person['姓名'] || person.name || '';
+  const spouse = person['配偶'] || person.spouse || '';
+  const note = person['備註'] || person.note || '';
+  const status = person['存歿'] || '';
+  const city = person['居住縣市'] || '';
+  const job = person['職業'] || '';
+  const uncertain = (person['辨識不確定'] || '').toUpperCase() === 'TRUE';
+
+  const nodeDiv = document.createElement('div');
+  nodeDiv.className = 'node';
+  nodeDiv.dataset.id = person.id;
+  nodeDiv.onclick = (e) => { if(!e.target.classList.contains('toggle-btn')) openPanel(person.id); };
+
+  let h = '';
+  if (has) h += '<span class="toggle-btn" onclick="event.stopPropagation();toggleNode(this.closest(\'li\'))"></span>';
+  h += `<span class="gen" style="background:${GEN_COLORS[gen]||'#999'}">${GEN_NAMES[gen]||gen+'世'}</span>`;
+  h += `<span class="name">${name}</span>`;
+  if (status === '存') h += '<span class="status-tag alive">存</span>';
+  else if (status === '歿') h += '<span class="status-tag deceased">歿</span>';
+  if (spouse) h += `<span class="spouse-tag">配 ${spouse}</span>`;
+  if (note) h += `<span class="note-tag">${note}</span>`;
+  if (city || job) h += `<span class="info-tag">${[city,job].filter(Boolean).join('・')}</span>`;
+  if (uncertain) h += '<span class="uncertain" title="照片辨識不確定，請校對">⚠</span>';
+
+  nodeDiv.innerHTML = h;
+  li.appendChild(nodeDiv);
+
+  if (has) {
+    const ul = document.createElement('ul');
+    person._children.forEach(c => ul.appendChild(renderNode(c)));
+    li.appendChild(ul);
+  }
+  return li;
+}
+
+function renderTree(roots) {
+  const container = document.getElementById('treeRoot');
+  container.innerHTML = '';
+  const ul = document.createElement('ul');
+  roots.forEach(r => ul.appendChild(renderNode(r)));
+  container.appendChild(ul);
+
+  // Stats
+  const total = Object.keys(allPeople).length;
+  const gens = [...new Set(Object.values(allPeople).map(p => parseInt(p['世代']||p.gen)||0))].sort((a,b)=>a-b);
+  const uncertainCount = Object.values(allPeople).filter(p => (p['辨識不確定']||'').toUpperCase()==='TRUE').length;
+  const aliveCount = Object.values(allPeople).filter(p => p['存歿']==='存').length;
+
+  document.getElementById('statsRow').innerHTML =
+    `共 <b>${total}</b> 人 ｜ ${GEN_NAMES[gens[0]]||''} 至 ${GEN_NAMES[gens[gens.length-1]]||''} ｜ ` +
+    (aliveCount ? `在世 <b>${aliveCount}</b> 人 ｜ ` : '') +
+    (uncertainCount ? `<span style="color:#C0392B">⚠ 待確認 <b>${uncertainCount}</b> 人</span>` : '<span style="color:#27AE60">✓ 全部已確認</span>');
+}
+
+// ══════════════════════════════════════════════════════
+//  DETAIL PANEL
+// ══════════════════════════════════════════════════════
+function openPanel(id) {
+  const p = allPeople[id];
+  if (!p) return;
+  const gen = parseInt(p['世代']||p.gen)||0;
+  const name = p['姓名']||p.name||'';
+  const spouse = p['配偶']||p.spouse||'';
+  const note = p['備註']||p.note||'';
+  const status = p['存歿']||'';
+  const city = p['居住縣市']||'';
+  const job = p['職業']||'';
+  const uncertain = (p['辨識不確定']||'').toUpperCase()==='TRUE';
+  const pid = p['父親id']||'';
+  const parent = allPeople[pid];
+
+  let html = `<h2>${name}</h2>`;
+  html += `<div class="gen-line"><span style="display:inline-block;padding:2px 8px;border-radius:8px;color:#fff;font-size:12px;background:${GEN_COLORS[gen]||'#999'}">${GEN_NAMES[gen]||gen+'世'}</span>`;
+  if (uncertain) html += ' <span style="color:#C0392B;font-size:13px;">⚠ 辨識不確定，請校對</span>';
+  html += '</div>';
+
+  const field = (label, val) => `<div class="field"><label>${label}</label><div class="val${val?'':' empty'}">${val||'尚未填寫'}</div></div>`;
+
+  html += field('配偶', spouse);
+  html += field('存歿', status === '存' ? '🟢 在世' : status === '歿' ? '🟣 已故' : '');
+  html += field('居住縣市', city);
+  html += field('職業', job);
+  html += field('備註', note);
+  if (parent) html += field('父親', `${parent['姓名']||parent.name} (${GEN_NAMES[parseInt(parent['世代']||parent.gen)]||''})`);
+
+  if (p._children && p._children.length) {
+    html += '<div class="children-list"><h4>子女：</h4>';
+    p._children.forEach(c => {
+      html += `<span class="child-chip" onclick="openPanel('${c.id}')">${c['姓名']||c.name}</span>`;
+    });
+    html += '</div>';
+  }
+
+  html += `<div class="id-line">ID: ${id}</div>`;
+
+  document.getElementById('panelContent').innerHTML = html;
+  document.getElementById('panel').classList.add('show');
+  document.getElementById('panelOverlay').classList.add('show');
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('show');
+  document.getElementById('panelOverlay').classList.remove('show');
+}
+
+// ══════════════════════════════════════════════════════
+//  TREE CONTROLS
+// ══════════════════════════════════════════════════════
+function toggleNode(li) { li.classList.toggle('collapsed'); li.classList.toggle('expanded'); }
+function expandAll() { document.querySelectorAll('.tree li.collapsed').forEach(li => { li.classList.remove('collapsed'); li.classList.add('expanded'); }); }
+function collapseAll() { document.querySelectorAll('.tree li.expanded').forEach(li => { if(li.querySelector(':scope>ul')){ li.classList.remove('expanded'); li.classList.add('collapsed'); }}); }
+function toggleLegend() { document.getElementById('legend').classList.toggle('show'); }
+
+function searchTree(q) {
+  document.querySelectorAll('.node').forEach(n => n.classList.remove('highlighted'));
+  if (!q.trim()) return;
+  document.querySelectorAll('.node').forEach(node => {
+    const id = node.dataset.id || '';
+    const p = allPeople[id];
+    if (!p) return;
+    const searchable = [p['姓名'],p.name,p['配偶'],p.spouse,p['備註'],p.note,p['居住縣市'],p['職業']].filter(Boolean).join('');
+    if (searchable.includes(q.trim())) {
+      node.classList.add('highlighted');
+      let parent = node.closest('li').parentElement.closest('li');
+      while (parent) { parent.classList.remove('collapsed'); parent.classList.add('expanded'); parent = parent.parentElement.closest('li'); }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════
+function openConfig() { document.getElementById('configModal').classList.add('show'); document.getElementById('sheetIdInput').value = localStorage.getItem(STORAGE_KEY)||''; }
+function closeConfig() { document.getElementById('configModal').classList.remove('show'); }
+function saveConfig() {
+  const id = document.getElementById('sheetIdInput').value.trim();
+  const gid = document.getElementById('sheetGidInput').value.trim() || '0';
+  if (!id) { alert('請輸入 Google Sheet ID'); return; }
+  localStorage.setItem(STORAGE_KEY, id);
+  localStorage.setItem(STORAGE_GID, gid);
+  closeConfig();
+  loadData();
+}
+function clearConfig() {
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(STORAGE_GID);
+  closeConfig();
+  loadData();
+}
+
+// ══════════════════════════════════════════════════════
+//  LOAD DATA
+// ══════════════════════════════════════════════════════
+async function loadData() {
+  const bar = document.getElementById('statusBar');
+  const url = getSheetUrl();
+
+  if (!url) {
+    bar.innerHTML = '<span class="dot ok"></span> 使用內建資料（點「⚙ 設定 Google Sheet」連接試算表即可即時同步）';
+    const rows = parseCSV(FALLBACK_CSV);
+    const roots = buildTree(rows);
+    renderTree(roots);
+    return;
+  }
+
+  bar.innerHTML = '<span class="dot loading"></span> 正在從 Google Sheets 載入…';
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const text = await resp.text();
+    const rows = parseCSV(text);
+    if (rows.length === 0) throw new Error('無資料');
+    const roots = buildTree(rows);
+    renderTree(roots);
+    const now = new Date().toLocaleTimeString('zh-TW');
+    bar.innerHTML = `<span class="dot ok"></span> ✓ 已從 Google Sheets 同步（${now}）── 重新整理網頁即可取得最新資料`;
+  } catch (err) {
+    console.error(err);
+    bar.innerHTML = `<span class="dot err"></span> Google Sheets 載入失敗：${err.message} ── 使用內建資料`;
+    const rows = parseCSV(FALLBACK_CSV);
+    const roots = buildTree(rows);
+    renderTree(roots);
+  }
+}
+
+// ── Init ──
+loadData();
+</script>
+</body>
+</html>
