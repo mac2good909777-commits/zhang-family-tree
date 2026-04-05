@@ -47,10 +47,19 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(-
 .mode-card .title{font-size:14px;font-weight:700;color:var(--accent)}
 .mode-card .desc{font-size:11px;color:var(--muted);margin-top:4px}
 
-/* ── Person rows ── */
-.person-row{display:grid;grid-template-columns:1fr 70px 70px;gap:8px;margin-bottom:8px;align-items:end}
-.person-row input,.person-row select{padding:8px 10px;font-size:14px}
-.person-row .label-sm{font-size:11px;color:var(--muted);margin-bottom:2px}
+/* ── Person card ── */
+.person-card{background:#FAFAF5;border:1px solid #E8E0D0;border-radius:10px;padding:12px;margin-bottom:10px;position:relative}
+.person-card .card-header{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:12px;color:var(--muted);font-weight:600}
+.person-card .card-num{background:var(--accent);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.person-card .row1{display:grid;grid-template-columns:1fr 70px 70px;gap:8px;margin-bottom:6px;align-items:end}
+.person-card .row2{display:grid;grid-template-columns:90px 80px 90px;gap:8px;align-items:end}
+.person-card .death-year{transition:.2s;opacity:1}
+.person-card .death-year.hide{opacity:0.3;pointer-events:none}
+.person-card input,.person-card select{padding:7px 8px;font-size:13px;border:1px solid var(--border);border-radius:6px;background:var(--bg);font-family:inherit;outline:none;width:100%}
+.person-card input:focus,.person-card select:focus{border-color:var(--accent)}
+.person-card .label-sm{font-size:10px;color:var(--muted);margin-bottom:2px}
+.person-card .remove-btn{position:absolute;top:8px;right:10px;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px}
+.person-card .remove-btn:hover{color:#E74C3C}
 
 .add-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 16px;border:1px dashed var(--border);border-radius:8px;background:none;cursor:pointer;font-size:13px;color:var(--accent);font-family:inherit;margin-top:4px}
 .add-btn:hover{background:#F5F0E1;border-color:var(--accent)}
@@ -253,14 +262,8 @@ footer a{color:var(--accent)}
     <h2>Step 6 ── <span id="siblingTitle">您的</span>兄弟姐妹</h2>
     <div class="hint" style="margin-bottom:12px">按出生順序填寫（不含<span class="subjectRef">您</span>自己）</div>
 
-    <div id="siblingList">
-      <div class="person-row">
-        <div><div class="label-sm">姓名</div><input type="text" name="sib_name_1" placeholder="姓名"></div>
-        <div><div class="label-sm">性別</div><select name="sib_gender_1"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
-        <div><div class="label-sm">排行</div><select name="sib_order_1"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
-      </div>
-    </div>
-    <button type="button" class="add-btn" onclick="addRow('siblingList','sib')">+ 新增</button>
+    <div id="siblingList"></div>
+    <button type="button" class="add-btn" onclick="addPersonCard('siblingList','sib')">+ 新增兄弟姐妹</button>
   </div>
 
   <!-- ═══ Step 6: 子女 ═══ -->
@@ -268,14 +271,8 @@ footer a{color:var(--accent)}
     <h2>Step 7 ── <span id="childTitle">您的</span>子女</h2>
     <div class="hint" style="margin-bottom:12px">按出生順序填寫</div>
 
-    <div id="childList">
-      <div class="person-row">
-        <div><div class="label-sm">姓名</div><input type="text" name="child_name_1" placeholder="姓名"></div>
-        <div><div class="label-sm">性別</div><select name="child_gender_1"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
-        <div><div class="label-sm">排行</div><select name="child_order_1"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
-      </div>
-    </div>
-    <button type="button" class="add-btn" onclick="addRow('childList','child')">+ 新增</button>
+    <div id="childList"></div>
+    <button type="button" class="add-btn" onclick="addPersonCard('childList','child')">+ 新增子女</button>
   </div>
 
   <!-- ═══ Step 7: 備註 ═══ -->
@@ -315,8 +312,8 @@ footer a{color:var(--accent)}
 <script>
 // ── State ──
 let mode = 'self';
-let sibCount = 1;
-let childCount = 1;
+let sibCount = 0;
+let childCount = 0;
 
 // ── Mode switching ──
 function setMode(m) {
@@ -369,17 +366,45 @@ function setMode(m) {
   }
 }
 
-// ── Add person rows ──
-function addRow(listId, prefix) {
+// ── Add person card ──
+function addPersonCard(listId, prefix) {
   const list = document.getElementById(listId);
   const count = prefix === 'sib' ? ++sibCount : ++childCount;
-  const row = document.createElement('div');
-  row.className = 'person-row';
-  row.innerHTML = `
-    <div><div class="label-sm">姓名</div><input type="text" name="${prefix}_name_${count}" placeholder="姓名"></div>
-    <div><div class="label-sm">性別</div><select name="${prefix}_gender_${count}"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
-    <div><div class="label-sm">排行</div><select name="${prefix}_order_${count}"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>`;
-  list.appendChild(row);
+  const label = prefix === 'sib' ? '兄弟姐妹' : '子女';
+  const card = document.createElement('div');
+  card.className = 'person-card';
+  card.id = `${prefix}_card_${count}`;
+  card.innerHTML = `
+    <div class="card-header"><span class="card-num">${count}</span> ${label} #${count}</div>
+    <button type="button" class="remove-btn" onclick="removeCard('${listId}','${prefix}',${count})" title="移除">&times;</button>
+    <div class="row1">
+      <div><div class="label-sm">姓名</div><input type="text" name="${prefix}_name_${count}" placeholder="姓名"></div>
+      <div><div class="label-sm">性別</div><select name="${prefix}_gender_${count}"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
+      <div><div class="label-sm">排行</div><select name="${prefix}_order_${count}"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
+    </div>
+    <div class="row2">
+      <div><div class="label-sm">出生年</div><input type="text" name="${prefix}_birth_${count}" placeholder="西元或民國" inputmode="numeric"></div>
+      <div><div class="label-sm">存歿</div><select name="${prefix}_alive_${count}" onchange="toggleDeathYear(this,'${prefix}',${count})"><option value="">--</option><option value="存">在世</option><option value="歿">已故</option></select></div>
+      <div class="death-year hide" id="${prefix}_death_${count}"><div class="label-sm">歿年</div><input type="text" name="${prefix}_deathyear_${count}" placeholder="西元或民國" inputmode="numeric"></div>
+    </div>`;
+  list.appendChild(card);
+}
+
+function removeCard(listId, prefix, num) {
+  const card = document.getElementById(`${prefix}_card_${num}`);
+  if (card) card.remove();
+}
+
+function toggleDeathYear(sel, prefix, num) {
+  const el = document.getElementById(`${prefix}_death_${num}`);
+  if (!el) return;
+  if (sel.value === '歿') {
+    el.classList.remove('hide');
+  } else {
+    el.classList.add('hide');
+    const input = el.querySelector('input');
+    if (input) input.value = '';
+  }
 }
 
 // ── Config ──
@@ -424,12 +449,16 @@ function collectData() {
   // Siblings
   const siblings = [];
   for (let i = 1; i <= sibCount; i++) {
+    if (!document.getElementById(`sib_card_${i}`)) continue; // removed card
     const name = fd.get(`sib_name_${i}`) || '';
     if (!name) continue;
     siblings.push({
       姓名: name,
       性別: fd.get(`sib_gender_${i}`) || '',
-      排行: fd.get(`sib_order_${i}`) || ''
+      排行: fd.get(`sib_order_${i}`) || '',
+      出生年: fd.get(`sib_birth_${i}`) || '',
+      存歿: fd.get(`sib_alive_${i}`) || '',
+      歿年: fd.get(`sib_deathyear_${i}`) || ''
     });
   }
   data.兄弟姐妹 = JSON.stringify(siblings);
@@ -437,12 +466,16 @@ function collectData() {
   // Children
   const children = [];
   for (let i = 1; i <= childCount; i++) {
+    if (!document.getElementById(`child_card_${i}`)) continue; // removed card
     const name = fd.get(`child_name_${i}`) || '';
     if (!name) continue;
     children.push({
       姓名: name,
       性別: fd.get(`child_gender_${i}`) || '',
-      排行: fd.get(`child_order_${i}`) || ''
+      排行: fd.get(`child_order_${i}`) || '',
+      出生年: fd.get(`child_birth_${i}`) || '',
+      存歿: fd.get(`child_alive_${i}`) || '',
+      歿年: fd.get(`child_deathyear_${i}`) || ''
     });
   }
   data.子女 = JSON.stringify(children);
@@ -494,21 +527,11 @@ function resetForm() {
   document.getElementById('familyForm').style.display = '';
   document.getElementById('resultScreen').classList.remove('show');
 
-  // Reset dynamic rows
-  document.getElementById('siblingList').innerHTML = `
-    <div class="person-row">
-      <div><div class="label-sm">姓名</div><input type="text" name="sib_name_1" placeholder="姓名"></div>
-      <div><div class="label-sm">性別</div><select name="sib_gender_1"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
-      <div><div class="label-sm">排行</div><select name="sib_order_1"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
-    </div>`;
-  document.getElementById('childList').innerHTML = `
-    <div class="person-row">
-      <div><div class="label-sm">姓名</div><input type="text" name="child_name_1" placeholder="姓名"></div>
-      <div><div class="label-sm">性別</div><select name="child_gender_1"><option value="">--</option><option value="男">男</option><option value="女">女</option></select></div>
-      <div><div class="label-sm">排行</div><select name="child_order_1"><option value="">--</option><option>長</option><option>次</option><option>三</option><option>四</option><option>五</option><option>六</option><option>七</option><option>八</option></select></div>
-    </div>`;
-  sibCount = 1;
-  childCount = 1;
+  // Reset dynamic cards
+  document.getElementById('siblingList').innerHTML = '';
+  document.getElementById('childList').innerHTML = '';
+  sibCount = 0;
+  childCount = 0;
 
   // Keep mode as "other" since they're likely filling for multiple people
   setMode('other');

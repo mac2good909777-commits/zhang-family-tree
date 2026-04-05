@@ -411,6 +411,26 @@ function buildTree(rows) {
       roots.push(r);
     }
   });
+
+  // Sort siblings by birth order (長=1, 次=2, 三=3...)
+  const ORDER_MAP = {'長':1,'大':1,'次':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10};
+  function getOrder(person) {
+    const note = person['備註'] || person.note || '';
+    const m = note.match(/^(長|大|次|三|四|五|六|七|八|九|十)/);
+    if (m) return ORDER_MAP[m[1]] || 99;
+    // Fallback: use last digit of ID
+    const parts = (person.id || '').split('.');
+    const last = parseInt(parts[parts.length - 1]);
+    return isNaN(last) ? 99 : last;
+  }
+  function sortChildren(node) {
+    if (node._children && node._children.length > 1) {
+      node._children.sort((a, b) => getOrder(a) - getOrder(b));
+    }
+    if (node._children) node._children.forEach(sortChildren);
+  }
+  roots.forEach(sortChildren);
+
   return roots;
 }
 
