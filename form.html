@@ -129,14 +129,7 @@ footer a{color:var(--accent)}
     <b>您填寫的每一筆資料都能幫助校正族譜</b>，讓上下輩分關係更準確，才能正確對應出整個家族的族譜樹。感謝您！
   </div>
 
-  <!-- Config (admin only, hidden by default) -->
-  <div class="config-banner" id="configBanner">
-    <h3>管理員設定</h3>
-    <p>輸入 Google Apps Script 網址：</p>
-    <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/xxxxx/exec">
-    <button onclick="saveScriptUrl()">儲存</button>
-    <button onclick="skipConfig()" style="background:#999;margin-left:4px">跳過</button>
-  </div>
+  <!-- Config removed for security — Script URL hardcoded -->
 
   <form id="familyForm" onsubmit="event.preventDefault(); showPreview();">
 
@@ -409,7 +402,6 @@ footer a{color:var(--accent)}
   <footer>
     張丙公派系表（丙派）── 水裡港<br>
     <a href="index.html">瀏覽族譜</a> ｜
-    <span style="cursor:pointer;text-decoration:underline" onclick="document.getElementById('configBanner').style.display='block'">管理員設定</span>
   </footer>
 </div>
 
@@ -538,19 +530,8 @@ function toggleDeathYear(sel, prefix, num) {
   }
 }
 
-// ── Config ──
-const SCRIPT_URL_KEY = 'zhang_form_script_url';
-function saveScriptUrl() {
-  const url = document.getElementById('scriptUrl').value.trim();
-  if (!url) return alert('請輸入網址');
-  localStorage.setItem(SCRIPT_URL_KEY, url);
-  document.getElementById('configBanner').style.display = 'none';
-  alert('已儲存');
-}
-function skipConfig() { document.getElementById('configBanner').style.display = 'none'; }
-if (!localStorage.getItem(SCRIPT_URL_KEY)) {
-  // Show config for first-time admin
-}
+// ── Config (hardcoded for security) ──
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVKSV3dDvOUYVj4ry-V_jIZkKYqhwafYxteFeScaZHLf9RzFjgJ5jYjgfYqaUbWk6x/exec';
 
 // ── Collect data ──
 function collectData() {
@@ -755,17 +736,14 @@ async function confirmSubmit() {
   btn.textContent = '送出中…';
 
   const data = pendingData;
-  const scriptUrl = localStorage.getItem(SCRIPT_URL_KEY);
 
-  if (scriptUrl) {
-    try {
-      await fetch(scriptUrl, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-    } catch (err) { console.error(err); }
-  }
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  } catch (err) { console.error(err); }
 
   // Local backup
   const existing = JSON.parse(localStorage.getItem('zhang_form_submissions') || '[]');
@@ -774,7 +752,6 @@ async function confirmSubmit() {
 
   // Show success
   document.getElementById('reviewScreen').classList.add('hidden');
-  document.getElementById('configBanner').style.display = 'none';
 
   const who = mode === 'self' ? '您自己' : data.姓名;
   const fillerInfo = mode === 'other' ? `（由 ${data.填寫人姓名} 代填）` : '';
