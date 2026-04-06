@@ -94,6 +94,16 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(-
 footer{text-align:center;padding:20px;font-size:12px;color:#bbb}
 footer a{color:var(--accent)}
 
+/* ── Review page ── */
+.review-group{margin-bottom:16px}
+.review-group .rg-title{font-size:13px;font-weight:700;color:var(--accent);padding:4px 0;border-bottom:1px solid #E8E0D0;margin-bottom:8px}
+.review-row{display:flex;padding:3px 0;font-size:14px;line-height:1.6}
+.review-row .rl{color:var(--muted);width:90px;flex-shrink:0;font-size:13px}
+.review-row .rv{flex:1;color:var(--text);font-weight:500}
+.review-row .rv.empty{color:#ccc;font-style:italic;font-weight:normal}
+.review-person{background:#FAFAF5;border:1px solid #E8E0D0;border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:13px}
+.review-person b{color:var(--accent)}
+
 .hidden{display:none!important}
 </style>
 </head>
@@ -122,7 +132,7 @@ footer a{color:var(--accent)}
     <button onclick="skipConfig()" style="background:#999;margin-left:4px">跳過</button>
   </div>
 
-  <form id="familyForm" onsubmit="return handleSubmit(event)">
+  <form id="familyForm" onsubmit="event.preventDefault(); showPreview();">
 
   <!-- ═══ Step 0: 填寫人身份 ═══ -->
   <div class="section">
@@ -346,11 +356,24 @@ footer a{color:var(--accent)}
   </div>
 
   <div class="submit-section">
-    <button type="submit" class="submit-btn" id="submitBtn">送出資料</button>
-    <div class="hint" style="margin-top:8px">送出後可以再填一份，幫其他家人建檔</div>
+    <button type="button" class="submit-btn" id="previewBtn" onclick="showPreview()" style="background:var(--accent2)">檢視填寫內容</button>
+    <div class="hint" style="margin-top:8px">送出前請先確認資料是否正確</div>
   </div>
 
   </form>
+
+  <!-- ═══ Preview / Review page ═══ -->
+  <div class="hidden" id="reviewScreen">
+    <div class="section" style="border:2px solid var(--accent);background:#FBFFF8">
+      <h2 style="text-align:center;font-size:18px;border:none;padding:0;margin-bottom:4px">📋 確認填寫內容</h2>
+      <p style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:16px">請確認以下資料正確後再送出</p>
+      <div id="reviewContent"></div>
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;padding:20px 0">
+      <button type="button" class="submit-btn" onclick="backToEdit()" style="background:#999;padding:14px 32px">← 返回修改</button>
+      <button type="button" class="submit-btn" id="confirmBtn" onclick="confirmSubmit()">確認送出</button>
+    </div>
+  </div>
 
   <!-- ═══ Success ═══ -->
   <div class="result" id="resultScreen">
@@ -579,14 +602,136 @@ function collectData() {
   return data;
 }
 
-// ── Submit ──
-async function handleSubmit(e) {
-  e.preventDefault();
-  const btn = document.getElementById('submitBtn');
+// ── Cached data for submit ──
+let pendingData = null;
+
+// ── Preview ──
+function showPreview() {
+  // Validate required fields first
+  const form = document.getElementById('familyForm');
+  if (!form.reportValidity()) return;
+
+  pendingData = collectData();
+  const d = pendingData;
+
+  let html = '';
+
+  // Helper
+  const row = (label, val) => `<div class="review-row"><span class="rl">${label}</span><span class="rv${val ? '' : ' empty'}">${val || '未填寫'}</span></div>`;
+  const aliveText = (v, dy) => {
+    if (v === '存') return '在世';
+    if (v === '歿') return '已故' + (dy ? `（${dy}）` : '');
+    return '';
+  };
+
+  // Filler info
+  if (d.填寫模式 === 'other') {
+    html += `<div class="review-group"><div class="rg-title">填寫人</div>`;
+    html += row('姓名', d.填寫人姓名);
+    html += row('關係', d.與被記錄人關係);
+    html += row('聯絡方式', d.填寫人聯絡);
+    html += `</div>`;
+  }
+
+  // Subject
+  html += `<div class="review-group"><div class="rg-title">被記錄人</div>`;
+  html += row('姓名', d.姓名);
+  html += row('性別', d.性別 === '男' ? '♂ 男' : d.性別 === '女' ? '♀ 女' : '');
+  html += row('排行', d.排行);
+  html += row('出生年', d.出生年);
+  html += row('存歿', aliveText(d.存歿, d.歿年));
+  html += row('居住縣市', d.居住縣市);
+  html += row('職業', d.職業);
+  html += `</div>`;
+
+  // Family members
+  const familyLabels = [
+    ['父親', '父親'], ['母親', '母親'], ['祖父', '祖父'], ['祖母', '祖母'], ['配偶', '配偶']
+  ];
+  const hasFamily = familyLabels.some(([_, k]) => d[k + '姓名']);
+  if (hasFamily) {
+    html += `<div class="review-group"><div class="rg-title">家庭成員</div>`;
+    familyLabels.forEach(([label, key]) => {
+      const name = d[key + '姓名'];
+      if (!name) return;
+      let info = name;
+      const birth = d[key + '出生年'];
+      const alive = d[key + '存歿'];
+      const death = d[key + '歿年'];
+      const parts = [];
+      if (birth) parts.push(`生：${birth}`);
+      if (alive) parts.push(aliveText(alive, death));
+      if (parts.length) info += `（${parts.join('，')}）`;
+      html += row(label, info);
+    });
+    html += `</div>`;
+  }
+
+  // Siblings
+  try {
+    const sibs = JSON.parse(d.兄弟姐妹 || '[]');
+    if (sibs.length) {
+      html += `<div class="review-group"><div class="rg-title">兄弟姐妹（${sibs.length} 人）</div>`;
+      sibs.forEach((s, i) => {
+        let info = `${s.性別 === '男' ? '♂' : s.性別 === '女' ? '♀' : ''} ${s.姓名}`;
+        const parts = [];
+        if (s.排行) parts.push(`排行：${s.排行}`);
+        if (s.出生年) parts.push(`生：${s.出生年}`);
+        if (s.存歿) parts.push(aliveText(s.存歿, s.歿年));
+        if (parts.length) info += `（${parts.join('，')}）`;
+        html += `<div class="review-person">${info}</div>`;
+      });
+      html += `</div>`;
+    }
+  } catch(e) {}
+
+  // Children
+  try {
+    const kids = JSON.parse(d.子女 || '[]');
+    if (kids.length) {
+      html += `<div class="review-group"><div class="rg-title">子女（${kids.length} 人）</div>`;
+      kids.forEach((c, i) => {
+        let info = `${c.性別 === '男' ? '♂' : c.性別 === '女' ? '♀' : ''} ${c.姓名}`;
+        const parts = [];
+        if (c.排行) parts.push(`排行：${c.排行}`);
+        if (c.出生年) parts.push(`生：${c.出生年}`);
+        if (c.存歿) parts.push(aliveText(c.存歿, c.歿年));
+        if (parts.length) info += `（${parts.join('，')}）`;
+        html += `<div class="review-person">${info}</div>`;
+      });
+      html += `</div>`;
+    }
+  } catch(e) {}
+
+  // Notes
+  if (d.備註) {
+    html += `<div class="review-group"><div class="rg-title">備註</div>`;
+    html += `<div style="font-size:14px;white-space:pre-wrap;color:#555">${d.備註}</div>`;
+    html += `</div>`;
+  }
+
+  document.getElementById('reviewContent').innerHTML = html;
+
+  // Hide form, show review
+  document.getElementById('familyForm').classList.add('hidden');
+  document.getElementById('reviewScreen').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+// ── Back to edit ──
+function backToEdit() {
+  document.getElementById('reviewScreen').classList.add('hidden');
+  document.getElementById('familyForm').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+// ── Confirm submit ──
+async function confirmSubmit() {
+  const btn = document.getElementById('confirmBtn');
   btn.disabled = true;
   btn.textContent = '送出中…';
 
-  const data = collectData();
+  const data = pendingData;
   const scriptUrl = localStorage.getItem(SCRIPT_URL_KEY);
 
   if (scriptUrl) {
@@ -605,22 +750,24 @@ async function handleSubmit(e) {
   localStorage.setItem('zhang_form_submissions', JSON.stringify(existing));
 
   // Show success
-  document.getElementById('familyForm').style.display = 'none';
+  document.getElementById('reviewScreen').classList.add('hidden');
   document.getElementById('configBanner').style.display = 'none';
 
   const who = mode === 'self' ? '您自己' : data.姓名;
   const fillerInfo = mode === 'other' ? `（由 ${data.填寫人姓名} 代填）` : '';
-  document.getElementById('resultSummary').textContent =
-    `已記錄：${who} ${fillerInfo}`;
+  document.getElementById('resultSummary').textContent = `已記錄：${who} ${fillerInfo}`;
 
   document.getElementById('resultScreen').classList.add('show');
-  return false;
+  btn.disabled = false;
+  btn.textContent = '確認送出';
 }
 
 // ── Reset for another entry ──
 function resetForm() {
   document.getElementById('familyForm').reset();
+  document.getElementById('familyForm').classList.remove('hidden');
   document.getElementById('familyForm').style.display = '';
+  document.getElementById('reviewScreen').classList.add('hidden');
   document.getElementById('resultScreen').classList.remove('show');
 
   // Reset dynamic cards
@@ -628,6 +775,7 @@ function resetForm() {
   document.getElementById('childList').innerHTML = '';
   sibCount = 0;
   childCount = 0;
+  pendingData = null;
 
   // Keep mode as "other" since they're likely filling for multiple people
   setMode('other');
