@@ -844,12 +844,16 @@ async function loadData() {
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const text = await resp.text();
+    if (!text.includes('父親id') && !text.includes('parent_id')) throw new Error('回傳非族譜資料');
     const rows = parseCSV(text);
-    if (rows.length === 0) throw new Error('無資料');
+    if (rows.length < 10) throw new Error(`資料筆數異常（${rows.length}）`);
+    // Validate: at least some rows must have parent IDs
+    const withPid = rows.filter(r => r['父親id'] || r['parent_id']).length;
+    if (withPid < 5) throw new Error('父親id欄位缺失');
     const roots = buildTree(rows);
     renderTree(roots);
     const now = new Date().toLocaleTimeString('zh-TW');
-    bar.innerHTML = `<span class="dot ok"></span> ✓ 已從 Google Sheets 同步（${now}）── 重新整理網頁即可取得最新資料`;
+    bar.innerHTML = `<span class="dot ok"></span> ✓ 已從 Google Sheets 同步（${rows.length}筆，${now}）── 重新整理網頁即可取得最新資料`;
   } catch (err) {
     console.error(err);
     bar.innerHTML = `<span class="dot err"></span> Google Sheets 載入失敗：${err.message} ── 使用內建資料`;
