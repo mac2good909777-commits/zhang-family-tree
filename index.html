@@ -226,6 +226,9 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
   <b>⚠ 資料說明：</b>本族譜目前的資料是以 AI 自動辨識翻拍的紙本文件所建立，可能存在文字辨識錯誤（如姓名、輩分、親屬關係等）。
   <b>懇請家族成員協助校對</b>，透過下方「📝 我要填寫資料」回報您所知道的正確資訊，讓族譜能更準確地呈現整個家族的脈絡。
 </div>
+<div style="background:#E8F5E9;border:1px solid #81C784;border-radius:8px;padding:12px 16px;margin:8px auto;max-width:900px;font-size:14px;line-height:1.6;color:#2E7D32;">
+  <b>👩 邀請加入女性家人：</b>過去的紙本族譜只記錄了男性，許多資料已不容易查詢。現在透過「📝 我要填寫資料」，您可以將母親、姊妹、女兒等女性家人全部加入，讓整個家族的脈絡更加完整。
+</div>
 
 <div class="status-bar" id="statusBar">
   <span class="dot loading"></span> 載入中…
@@ -235,7 +238,6 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
   <input type="text" id="searchInput" placeholder="搜尋姓名…" oninput="searchTree(this.value)">
   <button class="btn" onclick="expandAll()">全部展開</button>
   <button class="btn" onclick="collapseAll()">全部收合</button>
-  <button class="btn" onclick="expandToGen(15)" title="展開到第15世">展開三代</button>
   <button class="btn" onclick="toggleLegend()">世代圖例</button>
   <a href="form.html" class="btn" style="background:#8B6914;color:#fff;border-color:#8B6914;text-decoration:none">📝 我要填寫資料</a>
 </div>
@@ -401,6 +403,26 @@ function getSheetUrl() {
 // ══════════════════════════════════════════════════════
 const GEN_COLORS = {13:'var(--gen13)',14:'var(--gen14)',15:'var(--gen15)',16:'var(--gen16)',17:'var(--gen17)',18:'var(--gen18)',19:'var(--gen19)',20:'var(--gen20)',21:'var(--gen21)',22:'var(--gen22)'};
 const GEN_NAMES = {13:'十三世',14:'十四世',15:'十五世',16:'十六世',17:'十七世',18:'十八世',19:'十九世',20:'二十世',21:'二十一世',22:'二十二世'};
+
+// ══════════════════════════════════════════════════════
+//  YEAR CONVERSION 西元 ↔ 民國
+// ══════════════════════════════════════════════════════
+function formatYear(input) {
+  if (!input) return '';
+  const s = String(input).trim();
+  const num = parseInt(s.replace(/[年]/g, ''));
+  if (isNaN(num)) return s;
+  if (num > 1911) {
+    // 西元 → 顯示兩者
+    const roc = num - 1911;
+    return `西元 ${num} 年（民國 ${roc} 年）`;
+  } else if (num > 0 && num <= 200) {
+    // 可能是民國 → 顯示兩者
+    const ad = num + 1911;
+    return `民國 ${num} 年（西元 ${ad} 年）`;
+  }
+  return s;
+}
 
 // ══════════════════════════════════════════════════════
 //  FALLBACK DATA (used when no Google Sheet is connected)
@@ -662,8 +684,7 @@ function renderNode(person, depth) {
   else if (gender === '女') h += '<span class="gender-icon female" title="女">♀</span>';
   h += `<span class="name">${name}</span>`;
   if (orderLabel) h += `<span class="order-tag">${orderLabel}</span>`;
-  if (status === '存') h += '<span class="status-tag alive">存</span>';
-  else if (status === '歿') h += '<span class="status-tag deceased">歿</span>';
+  if (status === '歿') h += '<span class="status-tag deceased">歿</span>';
   if (spouse) h += `<span class="spouse-tag">配 ${spouse}</span>`;
   if (noteDisplay) h += `<span class="note-tag">${noteDisplay}</span>`;
   if (city || job) h += `<span class="info-tag">${[city,job].filter(Boolean).join('・')}</span>`;
@@ -696,11 +717,10 @@ function renderTree(roots) {
   const total = Object.keys(allPeople).length;
   const gens = [...new Set(Object.values(allPeople).map(p => parseInt(p['世代']||p.gen)||0))].sort((a,b)=>a-b);
   const uncertainCount = Object.values(allPeople).filter(p => (p['辨識不確定']||'').toUpperCase()==='TRUE').length;
-  const aliveCount = Object.values(allPeople).filter(p => p['存歿']==='存').length;
+
 
   document.getElementById('statsRow').innerHTML =
     `共 <b>${total}</b> 人 ｜ ${GEN_NAMES[gens[0]]||''} 至 ${GEN_NAMES[gens[gens.length-1]]||''} ｜ ` +
-    (aliveCount ? `在世 <b>${aliveCount}</b> 人 ｜ ` : '') +
     (uncertainCount ? `<span style="color:#C0392B">⚠ 待確認 <b>${uncertainCount}</b> 人</span>` : '<span style="color:#27AE60">✓ 全部已確認</span>');
 
   // Render generation filter chips
@@ -733,9 +753,14 @@ function openPanel(id) {
 
   const field = (label, val) => `<div class="field"><label>${label}</label><div class="val${val?'':' empty'}">${val||'尚未填寫'}</div></div>`;
 
+  const birthYear = p['出生年'] || p['birth_year'] || '';
+  const deathYear = p['卒年'] || p['death_year'] || '';
+
   html += field('性別', gender === '男' ? '♂ 男' : gender === '女' ? '♀ 女' : '');
+  if (birthYear) html += field('出生年', formatYear(birthYear));
+  if (deathYear) html += field('卒年', formatYear(deathYear));
   html += field('配偶', spouse);
-  html += field('存歿', status === '存' ? '🟢 在世' : status === '歿' ? '🟣 已故' : '');
+  html += field('存歿', status === '歿' ? '已故' : '');
   html += field('居住縣市', city);
   html += field('職業', job);
   html += field('備註', note);
@@ -1016,7 +1041,7 @@ function renderListView() {
 
       const genderClass = gender === '男' ? 'male' : gender === '女' ? 'female' : '';
       const genderIcon = gender === '男' ? '♂' : gender === '女' ? '♀' : '';
-      const statusIcon = status === '存' ? '🟢' : status === '歿' ? '🟣' : '';
+      const statusIcon = status === '歿' ? '🟣' : '';
 
       html += `<div class="list-card" onclick="openPanel('${p.id}')">
         <div class="card-order">${order || (idx + 1)}</div>

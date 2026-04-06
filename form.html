@@ -533,6 +533,17 @@ function toggleDeathYear(sel, prefix, num) {
 // ── Config (hardcoded for security) ──
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVKSV3dDvOUYVj4ry-V_jIZkKYqhwafYxteFeScaZHLf9RzFjgJ5jYjgfYqaUbWk6x/exec';
 
+// ── Year conversion 西元 ↔ 民國 ──
+function formatYear(input) {
+  if (!input) return '';
+  const s = String(input).trim();
+  const num = parseInt(s.replace(/[年]/g, ''));
+  if (isNaN(num)) return s;
+  if (num > 1911) return `西元 ${num} 年（民國 ${num - 1911} 年）`;
+  if (num > 0 && num <= 200) return `民國 ${num} 年（西元 ${num + 1911} 年）`;
+  return s;
+}
+
 // ── Collect data ──
 function collectData() {
   const f = document.getElementById('familyForm');
@@ -641,7 +652,7 @@ function showPreview() {
   html += row('姓名', d.姓名);
   html += row('性別', d.性別 === '男' ? '♂ 男' : d.性別 === '女' ? '♀ 女' : '');
   html += row('排行', d.排行);
-  html += row('出生年', d.出生年);
+  html += row('出生年', formatYear(d.出生年));
   html += row('存歿', aliveText(d.存歿, d.歿年));
   html += row('居住縣市', d.居住縣市);
   html += row('職業', d.職業);
@@ -663,7 +674,7 @@ function showPreview() {
       const alive = d[key + '存歿'];
       const death = d[key + '歿年'];
       const parts = [];
-      if (birth) parts.push(`生：${birth}`);
+      if (birth) parts.push(`生：${formatYear(birth)}`);
       if (alive) parts.push(aliveText(alive, death));
       if (parts.length) info += `（${parts.join('，')}）`;
       html += row(label, info);
@@ -680,7 +691,7 @@ function showPreview() {
         let info = `${s.性別 === '男' ? '♂' : s.性別 === '女' ? '♀' : ''} ${s.姓名}`;
         const parts = [];
         if (s.排行) parts.push(`排行：${s.排行}`);
-        if (s.出生年) parts.push(`生：${s.出生年}`);
+        if (s.出生年) parts.push(`生：${formatYear(s.出生年)}`);
         if (s.存歿) parts.push(aliveText(s.存歿, s.歿年));
         if (parts.length) info += `（${parts.join('，')}）`;
         html += `<div class="review-person">${info}</div>`;
@@ -698,7 +709,7 @@ function showPreview() {
         let info = `${c.性別 === '男' ? '♂' : c.性別 === '女' ? '♀' : ''} ${c.姓名}`;
         const parts = [];
         if (c.排行) parts.push(`排行：${c.排行}`);
-        if (c.出生年) parts.push(`生：${c.出生年}`);
+        if (c.出生年) parts.push(`生：${formatYear(c.出生年)}`);
         if (c.存歿) parts.push(aliveText(c.存歿, c.歿年));
         if (parts.length) info += `（${parts.join('，')}）`;
         html += `<div class="review-person">${info}</div>`;
