@@ -134,9 +134,9 @@ footer a{color:var(--accent)}
 
   <form id="familyForm" onsubmit="event.preventDefault(); showPreview();">
 
-  <!-- ═══ Step 0: 填寫人身份 ═══ -->
+  <!-- ═══ 第一步：填寫人身份 ═══ -->
   <div class="section">
-    <h2>Step 1 ── 您是誰？</h2>
+    <h2>第一步 ── 您是誰？</h2>
     <div class="hint" style="margin-bottom:12px">先告訴我們您的身份，方便後續聯繫確認</div>
 
     <div class="field">
@@ -151,9 +151,9 @@ footer a{color:var(--accent)}
     </div>
   </div>
 
-  <!-- ═══ Step 1: 選擇模式 ═══ -->
+  <!-- ═══ 第二步：選擇模式 ═══ -->
   <div class="section">
-    <h2>Step 2 ── 您要幫誰填寫？</h2>
+    <h2>第二步 ── 您要幫誰填寫？</h2>
 
     <div class="mode-selector">
       <div class="mode-card active" onclick="setMode('self')" id="modeSelf">
@@ -184,9 +184,9 @@ footer a{color:var(--accent)}
     </div>
   </div>
 
-  <!-- ═══ Step 2: 被記錄人資料 ═══ -->
+  <!-- ═══ 第三步：被記錄人資料 ═══ -->
   <div class="section">
-    <h2>Step 3 ── <span id="subjectTitle">個人</span>資料</h2>
+    <h2>第三步 ── <span id="subjectTitle">個人</span>資料</h2>
 
     <div class="notice" id="selfNotice">
       <b>以下填寫您自己的資料</b>
@@ -252,9 +252,9 @@ footer a{color:var(--accent)}
     </div>
   </div>
 
-  <!-- ═══ Step 3: 父親 ═══ -->
+  <!-- ═══ 第四步：父母祖父母 ═══ -->
   <div class="section">
-    <h2>Step 4 ── <span id="parentTitle">您的</span>父母・祖父母</h2>
+    <h2>第四步 ── <span id="parentTitle">您的</span>父母・祖父母</h2>
     <div class="hint" style="margin-bottom:16px">幫助定位在族譜中的位置，生歿資訊選填</div>
 
     <!-- 父親 -->
@@ -315,9 +315,9 @@ footer a{color:var(--accent)}
     </div>
   </div>
 
-  <!-- ═══ Step 4: 配偶 ═══ -->
+  <!-- ═══ 第五步：配偶 ═══ -->
   <div class="section">
-    <h2>Step 5 ── 配偶</h2>
+    <h2>第五步 ── 配偶</h2>
     <div class="field" style="margin-bottom:8px">
       <label><span id="spouseLabel">您的</span>配偶姓名</label>
       <input type="text" name="spouse_name" placeholder="未婚或不填請留空">
@@ -329,29 +329,38 @@ footer a{color:var(--accent)}
     </div>
   </div>
 
-  <!-- ═══ Step 5: 兄弟姐妹 ═══ -->
+  <!-- ═══ 第六步：兄弟姐妹 ═══ -->
   <div class="section">
-    <h2>Step 6 ── <span id="siblingTitle">您的</span>兄弟姐妹</h2>
+    <h2>第六步 ── <span id="siblingTitle">您的</span>兄弟姐妹</h2>
     <div class="hint" style="margin-bottom:12px">按出生順序填寫（不含<span class="subjectRef">您</span>自己）</div>
 
     <div id="siblingList"></div>
     <button type="button" class="add-btn" onclick="addPersonCard('siblingList','sib')">+ 新增兄弟姐妹</button>
   </div>
 
-  <!-- ═══ Step 6: 子女 ═══ -->
+  <!-- ═══ 第七步：子女 ═══ -->
   <div class="section">
-    <h2>Step 7 ── <span id="childTitle">您的</span>子女</h2>
+    <h2>第七步 ── <span id="childTitle">您的</span>子女</h2>
     <div class="hint" style="margin-bottom:12px">按出生順序填寫</div>
 
     <div id="childList"></div>
     <button type="button" class="add-btn" onclick="addPersonCard('childList','child')">+ 新增子女</button>
   </div>
 
-  <!-- ═══ Step 7: 備註 ═══ -->
+  <!-- ═══ 第八步：其他補充 ═══ -->
   <div class="section">
-    <h2>Step 8 ── 其他補充</h2>
+    <h2>第八步 ── 其他補充</h2>
+
     <div class="field">
-      <textarea name="notes" placeholder="任何想補充的資訊，例如：&#10;• 族譜上某個名字需要更正&#10;• 某位長輩的詳細故事&#10;• 其他家族紀錄"></textarea>
+      <label><span id="bioLabel">個人</span>補充資料</label>
+      <div class="hint">關於<span class="subjectRef">您</span>本人的其他資訊，例如學歷、經歷、特殊事蹟等</div>
+      <textarea name="subject_bio" placeholder="例如：&#10;• 曾任○○國小校長&#10;• 日治時期遷居高雄&#10;• 家族第一位大學畢業生" rows="3"></textarea>
+    </div>
+
+    <div class="field">
+      <label>其他備註</label>
+      <div class="hint">任何與族譜相關的補充</div>
+      <textarea name="notes" placeholder="例如：&#10;• 族譜上某個名字需要更正&#10;• 某位長輩的詳細故事&#10;• 其他家族紀錄"></textarea>
     </div>
   </div>
 
@@ -423,6 +432,7 @@ function setMode(m) {
     document.getElementById('spouseLabel').textContent = '您的';
     document.getElementById('siblingTitle').textContent = '您的';
     document.getElementById('childTitle').textContent = '您的';
+    document.getElementById('bioLabel').textContent = '個人';
     document.getElementById('fatherInput').placeholder = '';
     document.querySelectorAll('.subjectRef').forEach(el => el.textContent = '您');
     document.querySelectorAll('.parentRef').forEach(el => {
@@ -444,6 +454,7 @@ function setMode(m) {
     document.getElementById('spouseLabel').textContent = '被記錄人的';
     document.getElementById('siblingTitle').textContent = '被記錄人的';
     document.getElementById('childTitle').textContent = '被記錄人的';
+    document.getElementById('bioLabel').textContent = '被記錄人的';
     document.getElementById('fatherInput').placeholder = '';
     document.querySelectorAll('.subjectRef').forEach(el => el.textContent = '被記錄人');
     document.querySelectorAll('.parentRef').forEach(el => {
@@ -566,6 +577,7 @@ function collectData() {
     data[familyLabels[m] + '歿年'] = fd.get(m + '_death') || '';
   });
 
+  data.個人補充 = fd.get('subject_bio') || '';
   data.備註 = fd.get('notes') || '';
   data.填寫時間 = new Date().toLocaleString('zh-TW');
 
@@ -646,6 +658,7 @@ function showPreview() {
   html += row('存歿', aliveText(d.存歿, d.歿年));
   html += row('居住縣市', d.居住縣市);
   html += row('職業', d.職業);
+  if (d.個人補充) html += row('補充資料', d.個人補充);
   html += `</div>`;
 
   // Family members

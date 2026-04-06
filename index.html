@@ -103,6 +103,59 @@ body{font-family:"Noto Serif TC","Source Han Serif TC","PMingLiU",serif;backgrou
 .config-box ol{padding-left:20px;font-size:13px;color:#666;margin:10px 0}
 .config-box ol li{margin-bottom:6px}
 
+/* ── Ancestry block ── */
+.ancestry-block{max-width:1200px;margin:0 auto;padding:0 20px}
+.ancestry-toggle{display:flex;align-items:center;gap:8px;padding:12px 0;cursor:pointer;user-select:none;border:none;background:none;font-family:inherit;font-size:14px;color:var(--accent);font-weight:600}
+.ancestry-toggle:hover{color:#3A5731}
+.ancestry-toggle .arrow{transition:transform .2s;font-size:12px}
+.ancestry-toggle .arrow.open{transform:rotate(90deg)}
+.ancestry-content{display:none;padding:0 0 16px}
+.ancestry-content.show{display:block}
+.ancestry-card{background:linear-gradient(135deg,#F9F5EB 0%,#FFF8E7 100%);border:1px solid var(--border);border-radius:12px;padding:20px 24px;line-height:2}
+.ancestry-card h3{font-size:16px;color:var(--accent);margin-bottom:10px;letter-spacing:2px}
+.ancestry-card .origin-line{font-size:14px;color:var(--text);margin-bottom:6px}
+.ancestry-card .origin-line b{color:var(--accent2)}
+.ancestry-card .origin-note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.7;border-top:1px solid #E8E0D0;padding-top:8px}
+.ancestry-card .migration-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+.ancestry-card .migration-table th{background:var(--accent);color:#fff;padding:6px 10px;text-align:left;font-weight:600;font-size:12px}
+.ancestry-card .migration-table td{padding:5px 10px;border-bottom:1px solid #E8E0D0}
+.ancestry-card .migration-table tr:hover td{background:#F5F0E1}
+
+/* ── View Tabs ── */
+.view-tabs{display:flex;justify-content:center;gap:0;padding:0 16px;border-bottom:1px solid #EDE5D0}
+.view-tab{padding:10px 24px;font-size:14px;font-family:inherit;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:3px solid transparent;transition:.15s}
+.view-tab:hover{color:var(--text)}
+.view-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+
+/* ── Gen Stats Panel ── */
+.gen-stats{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:12px 16px;background:#F9F5EB;border-bottom:1px solid #EDE5D0}
+.gen-chip{padding:5px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:2px solid transparent;background:var(--card);transition:.15s;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.gen-chip:hover{border-color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.gen-chip.active{border-color:var(--accent);background:#E8F0E4;font-weight:600}
+.gen-chip .gen-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.gen-chip .gen-count{font-weight:700;color:var(--accent)}
+
+/* ── List View ── */
+.list-view{display:none;max-width:1200px;margin:0 auto;padding:16px 20px 60px}
+.list-view.show{display:block}
+.list-gen-section{margin-bottom:24px}
+.list-gen-header{display:flex;align-items:center;gap:10px;padding:8px 16px;border-radius:8px;margin-bottom:8px;cursor:pointer;user-select:none}
+.list-gen-header:hover{filter:brightness(0.95)}
+.list-gen-header h3{font-size:16px;color:#fff;margin:0;letter-spacing:2px}
+.list-gen-header .count-badge{background:rgba(255,255,255,.3);color:#fff;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600}
+.list-gen-header .relation-hint{margin-left:auto;color:rgba(255,255,255,.7);font-size:12px}
+.list-gen-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;padding:0 4px}
+.list-gen-body.collapsed{display:none}
+.list-card{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;background:var(--card);border:1px solid #E8E0D0;cursor:pointer;transition:.15s}
+.list-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);border-color:var(--accent)}
+.list-card .card-order{font-size:20px;font-weight:700;color:#ccc;min-width:28px;text-align:center}
+.list-card .card-name{font-size:16px;font-weight:700;letter-spacing:1px}
+.list-card .card-meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.list-card .card-meta span{background:#F5F0E1;padding:1px 6px;border-radius:4px}
+.list-card .card-gender{font-size:14px}
+.list-card .card-gender.male{color:#3A6B8C}
+.list-card .card-gender.female{color:#C0507E}
+
 /* ── Footer ── */
 footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px solid #EDE5D0}
 
@@ -116,9 +169,13 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
   .tree li::before{left:-18px;width:14px}
   .node .name{font-size:15px}
   .panel{width:100%;max-width:100%}
+  .gen-stats{gap:6px;padding:8px 10px}
+  .gen-chip{padding:4px 10px;font-size:12px}
+  .list-gen-body{grid-template-columns:1fr}
+  .view-tab{padding:8px 14px;font-size:13px}
 }
 @media print{
-  .toolbar,.status-bar,.edit-hint,.config-modal,.panel-overlay,.panel{display:none!important}
+  .toolbar,.status-bar,.edit-hint,.config-modal,.panel-overlay,.panel,.gen-stats,.view-tabs{display:none!important}
   .collapsed>ul{display:block!important}
   .tree-wrap{padding:0}
 }
@@ -160,9 +217,65 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
 
 <div class="stats-row" id="statsRow"></div>
 
-<div class="tree-wrap">
+<div class="ancestry-block">
+  <button class="ancestry-toggle" onclick="toggleAncestry()">
+    <span class="arrow" id="ancestryArrow">▶</span> 📜 祖源脈絡（張丙公以上）
+  </button>
+  <div class="ancestry-content" id="ancestryContent">
+    <div class="ancestry-card">
+      <h3>📜 從福建到台灣 ── 張氏遷台史</h3>
+
+      <div class="origin-line">
+        祖籍源流：<b>福建省漳州府漳浦縣</b> 古致丹山 → <b>金門青嶼</b> → <b>台灣</b>
+      </div>
+      <div class="origin-line">
+        堂號：<b>重恩堂</b>（清河衍派）
+      </div>
+      <div class="origin-line">
+        漳浦張氏始祖為隨開漳聖王陳元光入閩的分營將 <b>張虎</b>（伯紀公）後裔。
+      </div>
+      <div class="origin-line">
+        丹山源流登記：第1世 張朝敬（金門青嶼，全國125世）→ 第2世 張能治 → … → 第20世「大」字輩 → 第21世「振」字輩。
+      </div>
+      <div class="origin-line" style="margin-top:8px">
+        <b>張丙</b>（部分文獻記載為「<b>張炳</b>」），清嘉慶四年（西元 <b>1799 年</b>）自金門青嶼渡海遷往台灣，
+        定居於水裡港（今彰化一帶），為本派系開基祖。
+      </div>
+      <div class="origin-line">
+        張丙（炳）育有四子，先後於 1820～1825 年間陸續遷台：
+      </div>
+
+      <table class="migration-table">
+        <tr><th>姓名</th><th>全國世系</th><th>本族世系</th><th>字輩</th><th>遷台年代</th><th>備註</th></tr>
+        <tr><td><b>張炳</b>（丙）</td><td>144世</td><td>20世</td><td>大</td><td>1799年（清嘉慶）</td><td>父：希文，若化房，往台灣</td></tr>
+        <tr><td><b>張怀</b></td><td>145世</td><td>21世</td><td>振</td><td>1820年（清嘉慶）</td><td>炳之長子，若化房</td></tr>
+        <tr><td><b>張活</b></td><td>145世</td><td>21世</td><td>振</td><td>1821年（清道光）</td><td>炳之次子，父子遷往桃園縣</td></tr>
+        <tr><td><b>張杜</b></td><td>145世</td><td>21世</td><td>振</td><td>1823年（清道光）</td><td>炳之三子，中壢市，現人丁興旺</td></tr>
+        <tr><td><b>張泉</b></td><td>145世</td><td>21世</td><td>振</td><td>1825年（清道光）</td><td>炳之四子，桃園</td></tr>
+      </table>
+
+      <div class="origin-note">
+        資料來源：《金門青嶼社張氏重恩堂集及族系譜圖等專輯》（民國80年印）、
+        《福建省漳浦縣張氏族譜》（清河衍派，漳浦張氏中營太尉堂理事會編）、
+        漳浦縣古致丹山源流登記表。<br>
+        本族譜以張丙公為第十三世開基祖，往上世系詳見上述文獻。
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="gen-stats" id="genStats"></div>
+
+<div class="view-tabs">
+  <button class="view-tab active" onclick="switchView('tree')">🌳 族譜樹</button>
+  <button class="view-tab" onclick="switchView('list')">📋 世代列表</button>
+</div>
+
+<div class="tree-wrap" id="treeView">
   <div class="tree" id="treeRoot"></div>
 </div>
+
+<div class="list-view" id="listView"></div>
 
 <!-- Detail panel -->
 <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
@@ -506,6 +619,9 @@ function renderTree(roots) {
     `共 <b>${total}</b> 人 ｜ ${GEN_NAMES[gens[0]]||''} 至 ${GEN_NAMES[gens[gens.length-1]]||''} ｜ ` +
     (aliveCount ? `在世 <b>${aliveCount}</b> 人 ｜ ` : '') +
     (uncertainCount ? `<span style="color:#C0392B">⚠ 待確認 <b>${uncertainCount}</b> 人</span>` : '<span style="color:#27AE60">✓ 全部已確認</span>');
+
+  // Render generation filter chips
+  renderGenStats();
 }
 
 // ══════════════════════════════════════════════════════
@@ -569,6 +685,12 @@ function toggleNode(li) { li.classList.toggle('collapsed'); li.classList.toggle(
 function expandAll() { document.querySelectorAll('.tree li.collapsed').forEach(li => { li.classList.remove('collapsed'); li.classList.add('expanded'); }); }
 function collapseAll() { document.querySelectorAll('.tree li.expanded').forEach(li => { if(li.querySelector(':scope>ul')){ li.classList.remove('expanded'); li.classList.add('collapsed'); }}); }
 function toggleLegend() { document.getElementById('legend').classList.toggle('show'); }
+function toggleAncestry() {
+  const c = document.getElementById('ancestryContent');
+  const a = document.getElementById('ancestryArrow');
+  c.classList.toggle('show');
+  a.classList.toggle('open');
+}
 
 function searchTree(q) {
   document.querySelectorAll('.node').forEach(n => n.classList.remove('highlighted'));
@@ -640,6 +762,190 @@ async function loadData() {
     const roots = buildTree(rows);
     renderTree(roots);
   }
+}
+
+// ══════════════════════════════════════════════════════
+//  VIEW SWITCH (tree vs list)
+// ══════════════════════════════════════════════════════
+let currentView = 'tree';
+let activeGenFilter = null; // null = all
+
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.view-tab[onclick="switchView('${view}')"]`).classList.add('active');
+  document.getElementById('treeView').style.display = view === 'tree' ? '' : 'none';
+  const lv = document.getElementById('listView');
+  if (view === 'list') { lv.classList.add('show'); renderListView(); }
+  else { lv.classList.remove('show'); }
+}
+
+// ══════════════════════════════════════════════════════
+//  GEN STATS CHIPS + FILTER
+// ══════════════════════════════════════════════════════
+function renderGenStats() {
+  const people = Object.values(allPeople);
+  const genMap = {};
+  people.forEach(p => {
+    const g = parseInt(p['世代'] || p.gen) || 0;
+    if (!genMap[g]) genMap[g] = [];
+    genMap[g].push(p);
+  });
+  const gens = Object.keys(genMap).map(Number).sort((a, b) => a - b);
+
+  let html = `<div class="gen-chip ${activeGenFilter === null ? 'active' : ''}" onclick="filterGen(null)">
+    <span style="font-size:14px">👥</span> 全部 <span class="gen-count">${people.length}</span></div>`;
+  gens.forEach(g => {
+    const color = GEN_COLORS[g] || '#999';
+    html += `<div class="gen-chip ${activeGenFilter === g ? 'active' : ''}" onclick="filterGen(${g})">
+      <span class="gen-dot" style="background:${color}"></span>
+      ${GEN_NAMES[g] || g + '世'}
+      <span class="gen-count">${genMap[g].length}</span></div>`;
+  });
+  document.getElementById('genStats').innerHTML = html;
+}
+
+function filterGen(gen) {
+  activeGenFilter = gen;
+  renderGenStats();
+
+  if (currentView === 'list') {
+    renderListView();
+    return;
+  }
+  // In tree view: highlight matching nodes, dim others
+  document.querySelectorAll('.tree .node').forEach(node => {
+    const id = node.dataset.id || '';
+    const p = allPeople[id];
+    if (!p) return;
+    const g = parseInt(p['世代'] || p.gen) || 0;
+    if (gen === null) {
+      node.style.opacity = '';
+      node.style.transform = '';
+    } else if (g === gen) {
+      node.style.opacity = '1';
+      node.style.transform = 'scale(1.02)';
+      node.classList.add('highlighted');
+      // Expand parents
+      let parent = node.closest('li').parentElement.closest('li');
+      while (parent) { parent.classList.remove('collapsed'); parent.classList.add('expanded'); parent = parent.parentElement.closest('li'); }
+    } else {
+      node.style.opacity = '0.3';
+      node.style.transform = '';
+      node.classList.remove('highlighted');
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  LIST VIEW (by generation, sorted by birth order)
+// ══════════════════════════════════════════════════════
+const ORDER_MAP_LIST = {'長':1,'大':1,'次':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10};
+
+function getPersonOrder(p) {
+  const note = p['備註'] || p.note || '';
+  const m = note.match(/^(長|大|次|三|四|五|六|七|八|九|十)/);
+  if (m) return ORDER_MAP_LIST[m[1]] || 99;
+  const parts = (p.id || '').split('.');
+  const last = parseInt(parts[parts.length - 1]);
+  return isNaN(last) ? 99 : last;
+}
+
+function getOrderLabel(p) {
+  const note = p['備註'] || p.note || '';
+  const m = note.match(/^(長|大|次|三|四|五|六|七|八|九|十|承嗣)/);
+  return m ? m[1] : '';
+}
+
+function getRelationHint(gen, minGen, maxGen) {
+  const mid = Math.round((minGen + maxGen) / 2);
+  if (gen < mid - 1) return '長輩';
+  if (gen > mid + 1) return '晚輩';
+  return '平輩';
+}
+
+function renderListView() {
+  const people = Object.values(allPeople);
+  const genMap = {};
+  people.forEach(p => {
+    const g = parseInt(p['世代'] || p.gen) || 0;
+    if (!genMap[g]) genMap[g] = [];
+    genMap[g].push(p);
+  });
+  const gens = Object.keys(genMap).map(Number).sort((a, b) => a - b);
+  const minGen = gens[0], maxGen = gens[gens.length - 1];
+
+  // Filter
+  const showGens = activeGenFilter !== null ? [activeGenFilter] : gens;
+
+  let html = '';
+  showGens.forEach(g => {
+    if (!genMap[g]) return;
+    const color = GEN_COLORS[g] || '#999';
+    const hint = getRelationHint(g, minGen, maxGen);
+
+    // Sort: by parent group then by birth order within group
+    const sorted = [...genMap[g]].sort((a, b) => {
+      const pa = a['父親id'] || '';
+      const pb = b['父親id'] || '';
+      if (pa !== pb) return pa.localeCompare(pb);
+      return getPersonOrder(a) - getPersonOrder(b);
+    });
+
+    html += `<div class="list-gen-section" data-gen="${g}">
+      <div class="list-gen-header" style="background:${color}" onclick="toggleListSection(this)">
+        <h3>${GEN_NAMES[g] || g + '世'}</h3>
+        <span class="count-badge">${sorted.length} 人</span>
+        <span class="relation-hint">${hint}</span>
+      </div>
+      <div class="list-gen-body">`;
+
+    // Group by father for sub-headers
+    let lastParent = null;
+    sorted.forEach((p, idx) => {
+      const pid = p['父親id'] || '';
+      const parent = allPeople[pid];
+      const parentName = parent ? (parent['姓名'] || parent.name || '') : '';
+      const name = p['姓名'] || p.name || '';
+      const gender = p['性別'] || '';
+      const status = p['存歿'] || '';
+      const spouse = p['配偶'] || p.spouse || '';
+      const city = p['居住縣市'] || '';
+      const job = p['職業'] || '';
+      const order = getOrderLabel(p);
+      const uncertain = (p['辨識不確定'] || '').toUpperCase() === 'TRUE';
+
+      const genderClass = gender === '男' ? 'male' : gender === '女' ? 'female' : '';
+      const genderIcon = gender === '男' ? '♂' : gender === '女' ? '♀' : '';
+      const statusIcon = status === '存' ? '🟢' : status === '歿' ? '🟣' : '';
+
+      html += `<div class="list-card" onclick="openPanel('${p.id}')">
+        <div class="card-order">${order || (idx + 1)}</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:6px">
+            ${genderIcon ? `<span class="card-gender ${genderClass}">${genderIcon}</span>` : ''}
+            <span class="card-name">${name}</span>
+            ${statusIcon ? `<span style="font-size:12px">${statusIcon}</span>` : ''}
+            ${uncertain ? '<span style="color:#C0392B;font-size:12px" title="待確認">⚠</span>' : ''}
+          </div>
+          <div class="card-meta">
+            ${parentName ? `<span>父：${parentName}</span>` : ''}
+            ${spouse ? `<span>配：${spouse}</span>` : ''}
+            ${city ? `<span>${city}</span>` : ''}
+            ${job ? `<span>${job}</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+    });
+
+    html += '</div></div>';
+  });
+
+  document.getElementById('listView').innerHTML = html;
+}
+
+function toggleListSection(header) {
+  header.nextElementSibling.classList.toggle('collapsed');
 }
 
 // ── Init ──
