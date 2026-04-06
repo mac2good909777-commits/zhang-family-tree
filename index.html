@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>張丙公派系表（丙派）── 水裡港</title>
+<title>張丙公派系表（丙派）── 麗水港（龍井）</title>
 <style>
 :root {
   --bg:#FDFBF5; --card:#fff; --border:#D4C5A9; --text:#2C2C2C; --muted:#888;
@@ -73,6 +73,23 @@ body{font-family:"Noto Serif TC","Source Han Serif TC","PMingLiU",serif;backgrou
 .toggle-btn{display:inline-block;width:18px;height:18px;line-height:16px;text-align:center;font-size:12px;font-weight:bold;border:1px solid #ccc;border-radius:3px;background:#F9F5EB;cursor:pointer;user-select:none;flex-shrink:0}
 .toggle-btn:hover{background:#E8DCC8}
 .collapsed>ul{display:none}
+.tree li>ul{overflow:hidden;transition:max-height .4s ease,opacity .3s ease}
+.tree li.expanding>ul{animation:revealBranch .4s ease forwards}
+@keyframes revealBranch{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Descendant hint badge ── */
+.desc-hint{display:inline-block;font-size:10px;padding:1px 8px;border-radius:10px;background:#F0EAD6;color:#8B7355;margin-left:4px;cursor:pointer;transition:.2s;vertical-align:middle}
+.desc-hint:hover{background:#E0D4B8;color:#5D4037}
+
+/* ── Welcome overlay ── */
+.welcome-overlay{position:fixed;inset:0;background:rgba(253,251,245,0.95);z-index:300;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:1;transition:opacity .6s ease}
+.welcome-overlay.hide{opacity:0;pointer-events:none}
+.welcome-box{text-align:center;padding:40px;max-width:480px}
+.welcome-box h2{font-size:28px;color:var(--accent);letter-spacing:6px;margin-bottom:12px}
+.welcome-box p{font-size:15px;color:#666;line-height:1.8;margin-bottom:24px}
+.welcome-box .start-btn{padding:12px 36px;font-size:16px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:2px;transition:.2s}
+.welcome-box .start-btn:hover{background:#3A5731;transform:scale(1.03)}
+.welcome-box .tree-icon{font-size:60px;margin-bottom:16px;display:block}
 
 /* ── Detail panel ── */
 .panel-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100}
@@ -183,9 +200,23 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
 </head>
 <body>
 
+<!-- Welcome overlay -->
+<div class="welcome-overlay" id="welcomeOverlay">
+  <div class="welcome-box">
+    <span class="tree-icon">🌳</span>
+    <h2>張丙公族譜</h2>
+    <p>
+      清嘉慶四年（1799），張丙公自金門青嶼渡海來台，<br>
+      落腳麗水港（今台中龍井），開枝散葉至今。<br><br>
+      點開每一個名字，探索家族的故事。
+    </p>
+    <button class="start-btn" onclick="startExplore()">開始探索</button>
+  </div>
+</div>
+
 <div class="header">
   <h1>張丙公派系表</h1>
-  <div class="sub">丙派 ── 水裡港</div>
+  <div class="sub">丙派 ── 麗水港（龍井）</div>
   <div class="origin">祖籍：福建省漳州府漳浦縣眉田巷人家社杏仔腳</div>
 </div>
 
@@ -202,6 +233,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
   <input type="text" id="searchInput" placeholder="搜尋姓名…" oninput="searchTree(this.value)">
   <button class="btn" onclick="expandAll()">全部展開</button>
   <button class="btn" onclick="collapseAll()">全部收合</button>
+  <button class="btn" onclick="expandToGen(15)" title="展開到第15世">展開三代</button>
   <button class="btn" onclick="toggleLegend()">世代圖例</button>
   <a href="form.html" class="btn" style="background:#8B6914;color:#fff;border-color:#8B6914;text-decoration:none">📝 我要填寫資料</a>
 </div>
@@ -246,7 +278,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
       </div>
       <div class="origin-line" style="margin-top:8px">
         <b>張丙</b>（部分文獻記載為「<b>張炳</b>」），清嘉慶四年（西元 <b>1799 年</b>）自金門青嶼渡海遷往台灣，
-        定居於水裡港（今彰化一帶），為本派系開基祖。
+        定居於水裡港（即麗水港，今台中市龍井區），為本派系開基祖。
       </div>
       <div class="origin-line">
         張丙（炳）育有四子，先後於 1820～1825 年間陸續遷台：
@@ -294,7 +326,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
 <!-- Sheet ID hardcoded for security (admin only) -->
 
 <footer>
-  張丙公派系表（丙派）── 水裡港 ── 資料來源：族譜照片辨識 + Google Sheets<br>
+  張丙公派系表（丙派）── 麗水港（龍井）── 資料來源：族譜照片辨識 + Google Sheets<br>
   標有 ⚠ 者為辨識不確定，請在 Google Sheets 中校對後刪除「辨識不確定」欄的 TRUE
 </footer>
 
@@ -533,10 +565,19 @@ function buildTree(rows) {
 // ══════════════════════════════════════════════════════
 //  RENDER
 // ══════════════════════════════════════════════════════
-function renderNode(person) {
+function countDescendants(person) {
+  if (!person._children || !person._children.length) return 0;
+  let count = person._children.length;
+  person._children.forEach(c => { count += countDescendants(c); });
+  return count;
+}
+
+function renderNode(person, depth) {
+  if (depth === undefined) depth = 0;
   const has = person._children && person._children.length > 0;
   const li = document.createElement('li');
-  li.className = has ? 'expanded' : '';
+  // Start collapsed by default (except root at depth 0)
+  li.className = has ? (depth === 0 ? 'expanded' : 'collapsed') : '';
   li.dataset.id = person.id;
 
   const gen = parseInt(person['世代'] || person.gen) || 0;
@@ -573,13 +614,18 @@ function renderNode(person) {
   if (noteDisplay) h += `<span class="note-tag">${noteDisplay}</span>`;
   if (city || job) h += `<span class="info-tag">${[city,job].filter(Boolean).join('・')}</span>`;
   if (uncertain) h += '<span class="uncertain" title="照片辨識不確定，請校對">⚠</span>';
+  // Show descendant count hint on collapsed nodes
+  if (has) {
+    const descCount = countDescendants(person);
+    h += `<span class="desc-hint" title="點擊 ＋ 展開">+${descCount}人</span>`;
+  }
 
   nodeDiv.innerHTML = h;
   li.appendChild(nodeDiv);
 
   if (has) {
     const ul = document.createElement('ul');
-    person._children.forEach(c => ul.appendChild(renderNode(c)));
+    person._children.forEach(c => ul.appendChild(renderNode(c, depth + 1)));
     li.appendChild(ul);
   }
   return li;
@@ -664,9 +710,40 @@ function closePanel() {
 // ══════════════════════════════════════════════════════
 //  TREE CONTROLS
 // ══════════════════════════════════════════════════════
-function toggleNode(li) { li.classList.toggle('collapsed'); li.classList.toggle('expanded'); }
+function toggleNode(li) {
+  const wasCollapsed = li.classList.contains('collapsed');
+  li.classList.toggle('collapsed');
+  li.classList.toggle('expanded');
+  if (wasCollapsed) {
+    // Play reveal animation
+    li.classList.add('expanding');
+    setTimeout(() => li.classList.remove('expanding'), 400);
+  }
+}
 function expandAll() { document.querySelectorAll('.tree li.collapsed').forEach(li => { li.classList.remove('collapsed'); li.classList.add('expanded'); }); }
 function collapseAll() { document.querySelectorAll('.tree li.expanded').forEach(li => { if(li.querySelector(':scope>ul')){ li.classList.remove('expanded'); li.classList.add('collapsed'); }}); }
+function expandToGen(maxGen) {
+  // First collapse all, then expand only nodes up to maxGen
+  collapseAll();
+  document.querySelectorAll('.tree .node').forEach(node => {
+    const id = node.dataset.id || '';
+    const p = allPeople[id];
+    if (!p) return;
+    const g = parseInt(p['世代'] || p.gen) || 0;
+    if (g < maxGen) {
+      const li = node.closest('li');
+      if (li && li.querySelector(':scope>ul')) {
+        li.classList.remove('collapsed');
+        li.classList.add('expanded');
+      }
+    }
+  });
+}
+function startExplore() {
+  const overlay = document.getElementById('welcomeOverlay');
+  overlay.classList.add('hide');
+  setTimeout(() => overlay.style.display = 'none', 600);
+}
 function toggleLegend() { document.getElementById('legend').classList.toggle('show'); }
 function toggleAncestry() {
   const c = document.getElementById('ancestryContent');
