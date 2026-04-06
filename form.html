@@ -208,11 +208,23 @@ footer a{color:var(--accent)}
     </div>
 
     <div class="field">
+      <label>出生年</label>
+      <div class="hint">西元或民國皆可（例：1955 或 民國44年）</div>
+      <input type="text" name="subject_birth_year" placeholder="西元或民國" inputmode="numeric">
+    </div>
+
+    <div class="field">
       <label>存歿</label>
       <div class="radio-group" id="aliveGroup">
-        <label><input type="radio" name="subject_alive" value="存"><span>在世</span></label>
-        <label><input type="radio" name="subject_alive" value="歿"><span>已故</span></label>
+        <label><input type="radio" name="subject_alive" value="存" onchange="toggleSubjectDeath()"><span>在世</span></label>
+        <label><input type="radio" name="subject_alive" value="歿" onchange="toggleSubjectDeath()"><span>已故</span></label>
       </div>
+    </div>
+
+    <div class="field hidden" id="subjectDeathField">
+      <label>歿年</label>
+      <div class="hint">西元或民國皆可</div>
+      <input type="text" name="subject_death_year" placeholder="西元或民國" inputmode="numeric">
     </div>
 
     <div class="field">
@@ -341,9 +353,10 @@ function setMode(m) {
       else if (el.textContent.includes('母親') || el.textContent.includes('他/她的母親')) el.textContent = '母親';
       else el.textContent = '父親';
     });
-    // Auto-set alive = 存
+    // Auto-set alive = 存, hide death year
     const aliveRadio = document.querySelector('input[name="subject_alive"][value="存"]');
     if (aliveRadio) aliveRadio.checked = true;
+    document.getElementById('subjectDeathField').classList.add('hidden');
   } else {
     document.getElementById('selfNotice').classList.add('hidden');
     document.getElementById('otherNotice').classList.remove('hidden');
@@ -361,8 +374,9 @@ function setMode(m) {
       else if (el.textContent.includes('母親') || el.textContent === '母親') el.textContent = '他/她的母親';
       else el.textContent = '他/她的父親';
     });
-    // Reset alive selection
+    // Reset alive selection, show death year option
     document.querySelectorAll('input[name="subject_alive"]').forEach(r => r.checked = false);
+    document.getElementById('subjectDeathField').classList.add('hidden');
   }
 }
 
@@ -393,6 +407,18 @@ function addPersonCard(listId, prefix) {
 function removeCard(listId, prefix, num) {
   const card = document.getElementById(`${prefix}_card_${num}`);
   if (card) card.remove();
+}
+
+function toggleSubjectDeath() {
+  const val = document.querySelector('input[name="subject_alive"]:checked');
+  const field = document.getElementById('subjectDeathField');
+  if (val && val.value === '歿') {
+    field.classList.remove('hidden');
+  } else {
+    field.classList.add('hidden');
+    const input = field.querySelector('input');
+    if (input) input.value = '';
+  }
 }
 
 function toggleDeathYear(sel, prefix, num) {
@@ -435,7 +461,9 @@ function collectData() {
   data.姓名 = fd.get('subject_name') || '';
   data.性別 = fd.get('subject_gender') || '';
   data.排行 = fd.get('subject_order') || '';
+  data.出生年 = fd.get('subject_birth_year') || '';
   data.存歿 = fd.get('subject_alive') || '';
+  data.歿年 = fd.get('subject_death_year') || '';
   data.居住縣市 = fd.get('subject_city') || '';
   data.職業 = fd.get('subject_job') || '';
 
