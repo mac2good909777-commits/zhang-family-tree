@@ -189,6 +189,11 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
   <div class="origin">祖籍：福建省漳州府漳浦縣眉田巷人家社杏仔腳</div>
 </div>
 
+<div class="notice-bar" style="background:#FFF8E1;border:1px solid #F9A825;border-radius:8px;padding:12px 16px;margin:12px auto;max-width:900px;font-size:14px;line-height:1.6;color:#5D4037;">
+  <b>⚠ 資料說明：</b>本族譜目前的資料是以 AI 自動辨識翻拍的紙本文件所建立，可能存在文字辨識錯誤（如姓名、輩分、親屬關係等）。
+  <b>懇請家族成員協助校對</b>，透過下方「📝 我要填寫資料」回報您所知道的正確資訊，讓族譜能更準確地呈現整個家族的脈絡。
+</div>
+
 <div class="status-bar" id="statusBar">
   <span class="dot loading"></span> 載入中…
 </div>
@@ -199,7 +204,6 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
   <button class="btn" onclick="collapseAll()">全部收合</button>
   <button class="btn" onclick="toggleLegend()">世代圖例</button>
   <a href="form.html" class="btn" style="background:#8B6914;color:#fff;border-color:#8B6914;text-decoration:none">📝 我要填寫資料</a>
-  <button class="btn primary" onclick="openConfig()">⚙ 設定 Google Sheet</button>
 </div>
 
 <div class="legend" id="legend">
@@ -223,10 +227,10 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
   </button>
   <div class="ancestry-content" id="ancestryContent">
     <div class="ancestry-card">
-      <h3>📜 從福建到台灣 ── 張氏遷台史</h3>
+      <h3>📜 從金門到台灣 ── 張氏遷台史</h3>
 
       <div class="origin-line">
-        祖籍源流：<b>福建省漳州府漳浦縣</b> 古致丹山 → <b>金門青嶼</b> → <b>台灣</b>
+        祖籍源流：<b>金門青嶼</b>（均正公，青嶼開基祖）→ <b>福建省漳州府漳浦縣</b> 古致丹山 → <b>台灣</b>
       </div>
       <div class="origin-line">
         堂號：<b>重恩堂</b>（清河衍派）
@@ -235,7 +239,10 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
         漳浦張氏始祖為隨開漳聖王陳元光入閩的分營將 <b>張虎</b>（伯紀公）後裔。
       </div>
       <div class="origin-line">
-        丹山源流登記：第1世 張朝敬（金門青嶼，全國125世）→ 第2世 張能治 → … → 第20世「大」字輩 → 第21世「振」字輩。
+        丹山源流登記（本族世屬）：第1世 張朝敬（自金門青嶼遷出，全國125世，約南宋末年）→ 第2世 張能治 → … → 第20世「大」字輩 → 第21世「振」字輩。
+      </div>
+      <div class="origin-line" style="font-size:0.88em; color:#8B6914;">
+        ※ 丹山源流以張朝敬為第1世；若以金門青嶼世系計，約需再加2世（張丙公＝丹山第20世＝青嶼約第22世）。本表採丹山源流之書面記載。
       </div>
       <div class="origin-line" style="margin-top:8px">
         <b>張丙</b>（部分文獻記載為「<b>張炳</b>」），清嘉慶四年（西元 <b>1799 年</b>）自金門青嶼渡海遷往台灣，
@@ -284,29 +291,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
   <div id="panelContent"></div>
 </div>
 
-<!-- Config modal -->
-<div class="config-modal" id="configModal">
-  <div class="config-box">
-    <h3>⚙ 連接 Google Sheets</h3>
-    <p>將族譜資料放在 Google 試算表，網頁會自動抓取最新資料。家人在試算表修改後，重新整理網頁就會更新。</p>
-    <ol>
-      <li>打開 Google Sheets，匯入下載的 <code>張丙公族譜_資料庫.xlsx</code></li>
-      <li>點選 <b>檔案 → 共用 → 發佈到網路</b></li>
-      <li>選擇「族譜資料」工作表，格式選 <b>CSV</b>，點「發佈」</li>
-      <li>複製網址中的 Sheet ID（<code>/d/</code> 和 <code>/</code> 之間的那串字）</li>
-      <li>貼到下方欄位</li>
-    </ol>
-    <label style="font-size:13px;color:#666;">Google Sheet ID：</label>
-    <input type="text" id="sheetIdInput" placeholder="例：1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
-    <label style="font-size:13px;color:#666;margin-top:4px;display:block">工作表名稱（gid，通常為 0）：</label>
-    <input type="text" id="sheetGidInput" placeholder="0" value="0">
-    <div style="display:flex;gap:8px;margin-top:12px">
-      <button class="btn primary" onclick="saveConfig()">儲存並載入</button>
-      <button class="btn" onclick="closeConfig()">取消</button>
-      <button class="btn" onclick="clearConfig()" style="margin-left:auto;color:#C0392B">清除設定（用內建資料）</button>
-    </div>
-  </div>
-</div>
+<!-- Sheet ID hardcoded for security (admin only) -->
 
 <footer>
   張丙公派系表（丙派）── 水裡港 ── 資料來源：族譜照片辨識 + Google Sheets<br>
@@ -315,16 +300,14 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
 
 <script>
 // ══════════════════════════════════════════════════════
-//  CONFIG
+//  CONFIG（Sheet ID 硬編碼，僅管理員可修改原始碼）
 // ══════════════════════════════════════════════════════
-const STORAGE_KEY = 'zhang_family_sheet_id';
-const STORAGE_GID = 'zhang_family_sheet_gid';
+const SHEET_ID = '1fS1nFX5Xg15UKNhXeaUFRvBrxTvKrRp7MG7cpWqdO5M';
+const SHEET_GID = '0';
 
 function getSheetUrl() {
-  const id = localStorage.getItem(STORAGE_KEY);
-  const gid = localStorage.getItem(STORAGE_GID) || '0';
-  if (!id) return null;
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
+  if (!SHEET_ID || SHEET_ID === 'SHEET_ID_HERE') return null;
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
 }
 
 // ══════════════════════════════════════════════════════
@@ -708,26 +691,7 @@ function searchTree(q) {
   });
 }
 
-// ══════════════════════════════════════════════════════
-//  CONFIG
-// ══════════════════════════════════════════════════════
-function openConfig() { document.getElementById('configModal').classList.add('show'); document.getElementById('sheetIdInput').value = localStorage.getItem(STORAGE_KEY)||''; }
-function closeConfig() { document.getElementById('configModal').classList.remove('show'); }
-function saveConfig() {
-  const id = document.getElementById('sheetIdInput').value.trim();
-  const gid = document.getElementById('sheetGidInput').value.trim() || '0';
-  if (!id) { alert('請輸入 Google Sheet ID'); return; }
-  localStorage.setItem(STORAGE_KEY, id);
-  localStorage.setItem(STORAGE_GID, gid);
-  closeConfig();
-  loadData();
-}
-function clearConfig() {
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(STORAGE_GID);
-  closeConfig();
-  loadData();
-}
+// Config modal removed — Sheet ID is hardcoded for security
 
 // ══════════════════════════════════════════════════════
 //  LOAD DATA
@@ -737,7 +701,7 @@ async function loadData() {
   const url = getSheetUrl();
 
   if (!url) {
-    bar.innerHTML = '<span class="dot ok"></span> 使用內建資料（點「⚙ 設定 Google Sheet」連接試算表即可即時同步）';
+    bar.innerHTML = '<span class="dot ok"></span> 使用內建資料';
     const rows = parseCSV(FALLBACK_CSV);
     const roots = buildTree(rows);
     renderTree(roots);
