@@ -222,12 +222,8 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
   <div class="origin">祖籍：福建省漳州府漳浦縣眉田巷人家社杏仔腳</div>
 </div>
 
-<div class="notice-bar" style="background:#FFF8E1;border:1px solid #F9A825;border-radius:8px;padding:12px 16px;margin:12px auto;max-width:900px;font-size:14px;line-height:1.6;color:#5D4037;">
-  <b>⚠ 資料說明：</b>本族譜目前的資料是以 AI 自動辨識翻拍的紙本文件所建立，可能存在文字辨識錯誤（如姓名、輩分、親屬關係等）。
-  <b>懇請家族成員協助校對</b>，透過下方「📝 我要填寫資料」回報您所知道的正確資訊，讓族譜能更準確地呈現整個家族的脈絡。
-</div>
-<div style="background:#E8F5E9;border:1px solid #81C784;border-radius:8px;padding:12px 16px;margin:8px auto;max-width:900px;font-size:14px;line-height:1.6;color:#2E7D32;">
-  <b>👩 邀請加入女性家人：</b>過去的紙本族譜只記錄了男性，許多資料已不容易查詢。現在透過「📝 我要填寫資料」，您可以將母親、姊妹、女兒等女性家人全部加入，讓整個家族的脈絡更加完整。
+<div style="background:#FFF8E1;border:1px solid #F0E0A0;border-radius:8px;padding:12px 16px;margin:12px auto;max-width:900px;font-size:14px;line-height:1.7;color:#5D4037;">
+  📋 本族譜資料由 AI 辨識老族譜翻拍照片建立，可能有錯字或缺漏；過去紙本也只記錄男性，女性家人幾乎空白。歡迎透過「📝 我要填寫資料」協助校對、補充，也把母親、姊妹、女兒加進來，讓家族脈絡更完整。
 </div>
 
 <div class="status-bar" id="statusBar">
@@ -559,15 +555,28 @@ const FALLBACK_CSV = `id,姓名,性別,世代,父親id,配偶,備註,存歿,居�
 // ══════════════════════════════════════════════════════
 //  CSV PARSER
 // ══════════════════════════════════════════════════════
+// 欄位名稱對照：Google Sheet → 程式碼內部使用
+const HEADER_MAP = {
+  'ID': 'id', 'Id': 'id',
+  '父親ID': '父親id', '父親Id': '父親id', 'parent_id': '父親id',
+  '待確認': '辨識不確定',
+  '排行序號': '排行序號', '父親姓名': '父親姓名'
+};
+function normalizeHeader(h) {
+  const trimmed = h.trim().replace(/^"|"$/g, '');
+  return HEADER_MAP[trimmed] || trimmed;
+}
+
 function parseCSV(text) {
   const lines = text.trim().split('\n');
-  const headers = parseCSVLine(lines[0]);
+  const rawHeaders = parseCSVLine(lines[0]);
+  const headers = rawHeaders.map(normalizeHeader);
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
     const vals = parseCSVLine(lines[i]);
     if (vals.length < 2 || !vals[0].trim()) continue;
     const obj = {};
-    headers.forEach((h, idx) => obj[h.trim().replace(/^"|"$/g,'')] = (vals[idx]||'').trim().replace(/^"|"$/g,''));
+    headers.forEach((h, idx) => obj[h] = (vals[idx]||'').trim().replace(/^"|"$/g,''));
     rows.push(obj);
   }
   return rows;
@@ -869,7 +878,7 @@ async function loadData() {
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const text = await resp.text();
-    if (!text.includes('父親id') && !text.includes('parent_id')) throw new Error('回傳非族譜資料');
+    if (!text.includes('父親id') && !text.includes('父親ID') && !text.includes('parent_id')) throw new Error('回傳非族譜資料');
     const rows = parseCSV(text);
     if (rows.length < 10) throw new Error(`資料筆數異常（${rows.length}）`);
     // Validate: at least some rows must have parent IDs
