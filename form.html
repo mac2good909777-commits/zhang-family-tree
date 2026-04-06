@@ -100,6 +100,10 @@ footer a{color:var(--accent)}
 <body>
 
 <div class="container">
+  <div style="text-align:center;padding:10px 0 0">
+    <a href="index.html" style="color:var(--accent);font-size:13px;text-decoration:none">← 回到族譜瀏覽</a>
+  </div>
+
   <div class="header">
     <h1>張丙公族譜</h1>
     <div class="sub">丙派 ── 水裡港 ── 資料填寫表</div>
@@ -238,34 +242,80 @@ footer a{color:var(--accent)}
     </div>
   </div>
 
-  <!-- ═══ Step 3: 父母 ═══ -->
+  <!-- ═══ Step 3: 父親 ═══ -->
   <div class="section">
-    <h2>Step 4 ── <span id="parentTitle">您的</span>父母</h2>
-    <div class="hint" style="margin-bottom:12px">幫助定位在族譜中的位置</div>
+    <h2>Step 4 ── <span id="parentTitle">您的</span>父母・祖父母</h2>
+    <div class="hint" style="margin-bottom:16px">幫助定位在族譜中的位置，生歿資訊選填</div>
 
-    <div class="field">
-      <label><span class="parentRef">父親</span>姓名 *</label>
-      <input type="text" name="father_name" required placeholder="例：張基安" id="fatherInput">
+    <!-- 父親 -->
+    <div style="background:#FAFAF5;border:1px solid #E8E0D0;border-radius:10px;padding:12px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px"><span class="parentRef">父親</span></div>
+      <div class="field" style="margin-bottom:8px">
+        <label>姓名 *</label>
+        <input type="text" name="father_name" required placeholder="" id="fatherInput">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 80px 1fr;gap:8px">
+        <div class="field" style="margin-bottom:0"><div class="hint">出生年</div><input type="text" name="father_birth" placeholder="西元或民國" inputmode="numeric"></div>
+        <div class="field" style="margin-bottom:0"><div class="hint">存歿</div><select name="father_alive" onchange="toggleFamilyDeath(this,'father')"><option value="">--</option><option value="存">在世</option><option value="歿">已故</option></select></div>
+        <div class="field" style="margin-bottom:0" id="father_death_field"><div class="hint">歿年</div><input type="text" name="father_death" placeholder="西元或民國" inputmode="numeric" disabled></div>
+      </div>
     </div>
 
-    <div class="field">
-      <label><span class="parentRef">母親</span>姓名</label>
-      <input type="text" name="mother_name" placeholder="選填">
+    <!-- 母親 -->
+    <div style="background:#FAFAF5;border:1px solid #E8E0D0;border-radius:10px;padding:12px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px"><span class="parentRef">母親</span></div>
+      <div class="field" style="margin-bottom:8px">
+        <label>姓名</label>
+        <input type="text" name="mother_name" placeholder="選填">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 80px 1fr;gap:8px">
+        <div class="field" style="margin-bottom:0"><div class="hint">出生年</div><input type="text" name="mother_birth" placeholder="西元或民國" inputmode="numeric"></div>
+        <div class="field" style="margin-bottom:0"><div class="hint">存歿</div><select name="mother_alive" onchange="toggleFamilyDeath(this,'mother')"><option value="">--</option><option value="存">在世</option><option value="歿">已故</option></select></div>
+        <div class="field" style="margin-bottom:0" id="mother_death_field"><div class="hint">歿年</div><input type="text" name="mother_death" placeholder="西元或民國" inputmode="numeric" disabled></div>
+      </div>
     </div>
 
-    <div class="field">
-      <label><span class="parentRef">祖父</span>姓名</label>
-      <div class="hint">如果知道，有助於更精確定位</div>
-      <input type="text" name="grandfather_name" placeholder="選填">
+    <!-- 祖父 -->
+    <div style="background:#FAFAF5;border:1px solid #E8E0D0;border-radius:10px;padding:12px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px"><span class="parentRef">祖父</span></div>
+      <div class="field" style="margin-bottom:8px">
+        <label>姓名</label>
+        <div class="hint">如果知道，有助於更精確定位</div>
+        <input type="text" name="grandfather_name" placeholder="選填">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 80px 1fr;gap:8px">
+        <div class="field" style="margin-bottom:0"><div class="hint">出生年</div><input type="text" name="grandfather_birth" placeholder="西元或民國" inputmode="numeric"></div>
+        <div class="field" style="margin-bottom:0"><div class="hint">存歿</div><select name="grandfather_alive" onchange="toggleFamilyDeath(this,'grandfather')"><option value="">--</option><option value="存">在世</option><option value="歿">已故</option></select></div>
+        <div class="field" style="margin-bottom:0" id="grandfather_death_field"><div class="hint">歿年</div><input type="text" name="grandfather_death" placeholder="西元或民國" inputmode="numeric" disabled></div>
+      </div>
+    </div>
+
+    <!-- 祖母 -->
+    <div style="background:#FAFAF5;border:1px solid #E8E0D0;border-radius:10px;padding:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">祖母</div>
+      <div class="field" style="margin-bottom:8px">
+        <label>姓名</label>
+        <input type="text" name="grandmother_name" placeholder="選填">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 80px 1fr;gap:8px">
+        <div class="field" style="margin-bottom:0"><div class="hint">出生年</div><input type="text" name="grandmother_birth" placeholder="西元或民國" inputmode="numeric"></div>
+        <div class="field" style="margin-bottom:0"><div class="hint">存歿</div><select name="grandmother_alive" onchange="toggleFamilyDeath(this,'grandmother')"><option value="">--</option><option value="存">在世</option><option value="歿">已故</option></select></div>
+        <div class="field" style="margin-bottom:0" id="grandmother_death_field"><div class="hint">歿年</div><input type="text" name="grandmother_death" placeholder="西元或民國" inputmode="numeric" disabled></div>
+      </div>
     </div>
   </div>
 
   <!-- ═══ Step 4: 配偶 ═══ -->
   <div class="section">
     <h2>Step 5 ── 配偶</h2>
-    <div class="field">
+    <div class="field" style="margin-bottom:8px">
       <label><span id="spouseLabel">您的</span>配偶姓名</label>
       <input type="text" name="spouse_name" placeholder="未婚或不填請留空">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 80px 1fr;gap:8px">
+      <div class="field" style="margin-bottom:0"><div class="hint">出生年</div><input type="text" name="spouse_birth" placeholder="西元或民國" inputmode="numeric"></div>
+      <div class="field" style="margin-bottom:0"><div class="hint">存歿</div><select name="spouse_alive" onchange="toggleFamilyDeath(this,'spouse')"><option value="">--</option><option value="存">在世</option><option value="歿">已故</option></select></div>
+      <div class="field" style="margin-bottom:0" id="spouse_death_field"><div class="hint">歿年</div><input type="text" name="spouse_death" placeholder="西元或民國" inputmode="numeric" disabled></div>
     </div>
   </div>
 
@@ -346,7 +396,7 @@ function setMode(m) {
     document.getElementById('spouseLabel').textContent = '您的';
     document.getElementById('siblingTitle').textContent = '您的';
     document.getElementById('childTitle').textContent = '您的';
-    document.getElementById('fatherInput').placeholder = '例：張基安';
+    document.getElementById('fatherInput').placeholder = '';
     document.querySelectorAll('.subjectRef').forEach(el => el.textContent = '您');
     document.querySelectorAll('.parentRef').forEach(el => {
       if (el.textContent.includes('祖父')) el.textContent = '祖父';
@@ -367,7 +417,7 @@ function setMode(m) {
     document.getElementById('spouseLabel').textContent = '被記錄人的';
     document.getElementById('siblingTitle').textContent = '被記錄人的';
     document.getElementById('childTitle').textContent = '被記錄人的';
-    document.getElementById('fatherInput').placeholder = '被記錄人的父親姓名';
+    document.getElementById('fatherInput').placeholder = '';
     document.querySelectorAll('.subjectRef').forEach(el => el.textContent = '被記錄人');
     document.querySelectorAll('.parentRef').forEach(el => {
       if (el.textContent.includes('祖父')) el.textContent = '他/她的祖父';
@@ -407,6 +457,17 @@ function addPersonCard(listId, prefix) {
 function removeCard(listId, prefix, num) {
   const card = document.getElementById(`${prefix}_card_${num}`);
   if (card) card.remove();
+}
+
+function toggleFamilyDeath(sel, who) {
+  const field = document.getElementById(who + '_death_field');
+  if (!field) return;
+  const input = field.querySelector('input');
+  if (sel.value === '歿') {
+    if (input) { input.disabled = false; input.style.opacity = '1'; }
+  } else {
+    if (input) { input.disabled = true; input.value = ''; input.style.opacity = '0.3'; }
+  }
 }
 
 function toggleSubjectDeath() {
@@ -467,10 +528,17 @@ function collectData() {
   data.居住縣市 = fd.get('subject_city') || '';
   data.職業 = fd.get('subject_job') || '';
 
-  data.父親姓名 = fd.get('father_name') || '';
-  data.母親姓名 = fd.get('mother_name') || '';
-  data.祖父姓名 = fd.get('grandfather_name') || '';
-  data.配偶姓名 = fd.get('spouse_name') || '';
+  // Family members with birth/death info
+  const familyMembers = ['father', 'mother', 'grandfather', 'grandmother', 'spouse'];
+  const familyLabels = { father: '父親', mother: '母親', grandfather: '祖父', grandmother: '祖母', spouse: '配偶' };
+  familyMembers.forEach(m => {
+    const nameField = m === 'spouse' ? 'spouse_name' : (m === 'grandmother' ? 'grandmother_name' : m + '_name');
+    data[familyLabels[m] + '姓名'] = fd.get(nameField) || '';
+    data[familyLabels[m] + '出生年'] = fd.get(m + '_birth') || '';
+    data[familyLabels[m] + '存歿'] = fd.get(m + '_alive') || '';
+    data[familyLabels[m] + '歿年'] = fd.get(m + '_death') || '';
+  });
+
   data.備註 = fd.get('notes') || '';
   data.填寫時間 = new Date().toLocaleString('zh-TW');
 
