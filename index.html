@@ -70,8 +70,10 @@ body{font-family:"Noto Serif TC","Source Han Serif TC","PMingLiU",serif;backgrou
 .node .gender-icon.male{color:#3A6B8C}
 .node .gender-icon.female{color:#C0507E}
 .node .order-tag{font-size:9px;padding:0 5px;border-radius:8px;background:#E8E0D0;color:#6B5B3E;font-weight:600;letter-spacing:1px}
-.toggle-btn{display:inline-block;width:18px;height:18px;line-height:16px;text-align:center;font-size:12px;font-weight:bold;border:1px solid #ccc;border-radius:3px;background:#F9F5EB;cursor:pointer;user-select:none;flex-shrink:0}
-.toggle-btn:hover{background:#E8DCC8}
+.toggle-btn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;font-size:14px;font-weight:bold;border:1px solid #bbb;border-radius:4px;background:#F9F5EB;cursor:pointer;user-select:none;flex-shrink:0;color:#4A6741;transition:.15s}
+.toggle-btn:hover{background:#E8DCC8;border-color:#4A6741}
+.collapsed>.node .toggle-btn::after{content:"+"}
+.expanded>.node .toggle-btn::after{content:"−"}
 .collapsed>ul{display:none}
 .tree li>ul{overflow:hidden;transition:max-height .4s ease,opacity .3s ease}
 .tree li.expanding>ul{animation:revealBranch .4s ease forwards}
@@ -373,7 +375,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:#bbb;border-top:1px s
 
   <!-- 張現傑 -->
   <div style="text-align:center;font-size:13px;color:#999;line-height:1.8;">
-    數位整理協助：<span style="color:#666;font-weight:600;">張現傑</span>（瑞禾開發・睦聚工業地）
+    數位整理協助：<span style="color:#666;font-weight:600;">張現傑</span>（睦聚地產開發）
   </div>
 </div>
 
@@ -651,7 +653,7 @@ function renderNode(person, depth) {
   const nodeDiv = document.createElement('div');
   nodeDiv.className = 'node';
   nodeDiv.dataset.id = person.id;
-  nodeDiv.onclick = (e) => { if(!e.target.classList.contains('toggle-btn')) openPanel(person.id); };
+  nodeDiv.onclick = (e) => { if(!e.target.classList.contains('toggle-btn') && !e.target.classList.contains('desc-hint')) openPanel(person.id); };
 
   let h = '';
   if (has) h += '<span class="toggle-btn" onclick="event.stopPropagation();toggleNode(this.closest(\'li\'))"></span>';
@@ -669,7 +671,7 @@ function renderNode(person, depth) {
   // Show descendant count hint on collapsed nodes
   if (has) {
     const descCount = countDescendants(person);
-    h += `<span class="desc-hint" title="點擊 ＋ 展開">+${descCount}人</span>`;
+    h += `<span class="desc-hint" onclick="event.stopPropagation();toggleNode(this.closest('li'))">+${descCount}人</span>`;
   }
 
   nodeDiv.innerHTML = h;
